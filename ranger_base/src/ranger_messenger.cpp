@@ -404,14 +404,17 @@ void RangerROSMessenger::UpdateOdometry(double linear, double angular,
 }
 
 void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg) {
-  double steer_cmd;
-  double radius;
+  double steer_cmd = 0.0;
+  double radius = 0.0;
 
   // analyze Twist msg and switch motion_mode
   // check for parking mode, only applicable to RangerMiniV2
   if (parking_mode_ && robot_type_ == RangerSubType::kRangerMiniV2) {
     return;
   } else if (msg->linear.y != 0) {
+    // lateral component requested: V1 with no forward speed uses the dedicated
+    // side-slip mode; every other case uses parallel steering (pure lateral
+    // motion on non-V1 robots is handled inside the PARALLEL case below).
     if (msg->linear.x == 0.0 && robot_type_ == RangerSubType::kRangerMiniV1) {
       motion_mode_ = MotionState::MOTION_MODE_SIDE_SLIP;
       robot_->SetMotionMode(MotionState::MOTION_MODE_SIDE_SLIP);
@@ -526,15 +529,11 @@ double RangerROSMessenger::CalculateSteeringAngle(geometry_msgs::msg::Twist msg,
   radius = linear / angular;
   int k = (msg.angular.z * msg.linear.x) >= 0 ? 1 : -1;
 
-  double l, w, phi_i, x;
-  l = robot_params_.wheelbase;
-  w = robot_params_.track;
-  x = sqrt(radius * radius + (l / 2) * (l / 2));
-  // phi_i = atan((l / 2) / (x - w / 2));
-  phi_i = atan((l / 2) / radius);
+  const double l = robot_params_.wheelbase;
+  double phi_i = atan((l / 2) / radius);
 
-  const double max_phi_rad = 40.0 * M_PI / 180.0;
-  phi_i = std::min(phi_i, max_phi_rad);
+  // clamp to the model's maximum (inner) steering angle
+  phi_i = std::min(phi_i, robot_params_.max_steer_angle_ackermann);
 
   return k * phi_i;
 }
