@@ -17,8 +17,8 @@ using namespace westonrobot;
 
 void SignalHandler(int s)
 {
-  printf("Caught signal %d, program exit\n", s);
-  exit(EXIT_FAILURE);
+  printf("Caught signal %d, shutting down\n", s);
+  rclcpp::shutdown();
 }
 
 void controlSingal()

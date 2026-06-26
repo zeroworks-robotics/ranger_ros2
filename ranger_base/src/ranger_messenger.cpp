@@ -232,24 +232,39 @@ void RangerROSMessenger::PublishStateToROS() {
 
     ranger_msgs::msg::ActuatorStateArray actuator_msg;
     actuator_msg.header.stamp = current_time_;
+
+    // Ranger has 4 wheels, each with a drive motor and a steering motor (8 in
+    // total). speed_1~4 map to drive motors (actuator id 0~3) and angle_5~8 map
+    // to steering motors (actuator id 4~7).
+    const float motor_speeds[8] = {actuator_state.motor_speeds.speed_1,
+                                   actuator_state.motor_speeds.speed_2,
+                                   actuator_state.motor_speeds.speed_3,
+                                   actuator_state.motor_speeds.speed_4,
+                                   0, 0, 0, 0};
+    const float motor_angles[8] = {0, 0, 0, 0,
+                                   actuator_state.motor_angles.angle_5,
+                                   actuator_state.motor_angles.angle_6,
+                                   actuator_state.motor_angles.angle_7,
+                                   actuator_state.motor_angles.angle_8};
+
     for (int i = 0; i < 8; i++) {
       ranger_msgs::msg::DriverState driver_state_msg;
       driver_state_msg.driver_voltage =
-          actuator_state.actuator_ls_state->driver_voltage;
+          actuator_state.actuator_ls_state[i].driver_voltage;
       driver_state_msg.driver_temperature =
-          actuator_state.actuator_ls_state->driver_temp;
+          actuator_state.actuator_ls_state[i].driver_temp;
       driver_state_msg.motor_temperature =
-          actuator_state.actuator_ls_state->motor_temp;
+          actuator_state.actuator_ls_state[i].motor_temp;
       driver_state_msg.driver_state =
-          actuator_state.actuator_ls_state->driver_state;
+          actuator_state.actuator_ls_state[i].driver_state;
 
       ranger_msgs::msg::MotorState motor_state_msg;
-      motor_state_msg.current = actuator_state.actuator_hs_state->current;
-      motor_state_msg.pulse_count = actuator_state.actuator_hs_state->pulse_count;
-      motor_state_msg.rpm = actuator_state.actuator_hs_state->rpm;
-      motor_state_msg.motor_angles = actuator_state.motor_angles.angle_5;
-      motor_state_msg.motor_speeds = actuator_state.motor_speeds.speed_1;
-      
+      motor_state_msg.current = actuator_state.actuator_hs_state[i].current;
+      motor_state_msg.pulse_count = actuator_state.actuator_hs_state[i].pulse_count;
+      motor_state_msg.rpm = actuator_state.actuator_hs_state[i].rpm;
+      motor_state_msg.motor_angles = motor_angles[i];
+      motor_state_msg.motor_speeds = motor_speeds[i];
+
       ranger_msgs::msg::ActuatorState actuator_state_msg;
       actuator_state_msg.id = i;
       actuator_state_msg.driver = driver_state_msg;
