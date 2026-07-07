@@ -232,24 +232,39 @@ void RangerROSMessenger::PublishStateToROS() {
 
     ranger_msgs::msg::ActuatorStateArray actuator_msg;
     actuator_msg.header.stamp = current_time_;
+
+    // Ranger has 4 wheels, each with a drive motor and a steering motor (8 in
+    // total). speed_1~4 map to drive motors (actuator id 0~3) and angle_5~8 map
+    // to steering motors (actuator id 4~7).
+    const float motor_speeds[8] = {actuator_state.motor_speeds.speed_1,
+                                   actuator_state.motor_speeds.speed_2,
+                                   actuator_state.motor_speeds.speed_3,
+                                   actuator_state.motor_speeds.speed_4,
+                                   0, 0, 0, 0};
+    const float motor_angles[8] = {0, 0, 0, 0,
+                                   actuator_state.motor_angles.angle_5,
+                                   actuator_state.motor_angles.angle_6,
+                                   actuator_state.motor_angles.angle_7,
+                                   actuator_state.motor_angles.angle_8};
+
     for (int i = 0; i < 8; i++) {
       ranger_msgs::msg::DriverState driver_state_msg;
       driver_state_msg.driver_voltage =
-          actuator_state.actuator_ls_state->driver_voltage;
+          actuator_state.actuator_ls_state[i].driver_voltage;
       driver_state_msg.driver_temperature =
-          actuator_state.actuator_ls_state->driver_temp;
+          actuator_state.actuator_ls_state[i].driver_temp;
       driver_state_msg.motor_temperature =
-          actuator_state.actuator_ls_state->motor_temp;
+          actuator_state.actuator_ls_state[i].motor_temp;
       driver_state_msg.driver_state =
-          actuator_state.actuator_ls_state->driver_state;
+          actuator_state.actuator_ls_state[i].driver_state;
 
       ranger_msgs::msg::MotorState motor_state_msg;
-      motor_state_msg.current = actuator_state.actuator_hs_state->current;
-      motor_state_msg.pulse_count = actuator_state.actuator_hs_state->pulse_count;
-      motor_state_msg.rpm = actuator_state.actuator_hs_state->rpm;
-      motor_state_msg.motor_angles = actuator_state.motor_angles.angle_5;
-      motor_state_msg.motor_speeds = actuator_state.motor_speeds.speed_1;
-      
+      motor_state_msg.current = actuator_state.actuator_hs_state[i].current;
+      motor_state_msg.pulse_count = actuator_state.actuator_hs_state[i].pulse_count;
+      motor_state_msg.rpm = actuator_state.actuator_hs_state[i].rpm;
+      motor_state_msg.motor_angles = motor_angles[i];
+      motor_state_msg.motor_speeds = motor_speeds[i];
+
       ranger_msgs::msg::ActuatorState actuator_state_msg;
       actuator_state_msg.id = i;
       actuator_state_msg.driver = driver_state_msg;
@@ -389,14 +404,17 @@ void RangerROSMessenger::UpdateOdometry(double linear, double angular,
 }
 
 void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg) {
-  double steer_cmd;
-  double radius;
+  double steer_cmd = 0.0;
+  double radius = 0.0;
 
   // analyze Twist msg and switch motion_mode
   // check for parking mode, only applicable to RangerMiniV2
   if (parking_mode_ && robot_type_ == RangerSubType::kRangerMiniV2) {
     return;
   } else if (msg->linear.y != 0) {
+    // lateral component requested: V1 with no forward speed uses the dedicated
+    // side-slip mode; every other case uses parallel steering (pure lateral
+    // motion on non-V1 robots is handled inside the PARALLEL case below).
     if (msg->linear.x == 0.0 && robot_type_ == RangerSubType::kRangerMiniV1) {
       motion_mode_ = MotionState::MOTION_MODE_SIDE_SLIP;
       robot_->SetMotionMode(MotionState::MOTION_MODE_SIDE_SLIP);
@@ -511,15 +529,11 @@ double RangerROSMessenger::CalculateSteeringAngle(geometry_msgs::msg::Twist msg,
   radius = linear / angular;
   int k = (msg.angular.z * msg.linear.x) >= 0 ? 1 : -1;
 
-  double l, w, phi_i, x;
-  l = robot_params_.wheelbase;
-  w = robot_params_.track;
-  x = sqrt(radius * radius + (l / 2) * (l / 2));
-  // phi_i = atan((l / 2) / (x - w / 2));
-  phi_i = atan((l / 2) / radius);
+  const double l = robot_params_.wheelbase;
+  double phi_i = atan((l / 2) / radius);
 
-  const double max_phi_rad = 40.0 * M_PI / 180.0;
-  phi_i = std::min(phi_i, max_phi_rad);
+  // clamp to the model's maximum (inner) steering angle
+  phi_i = std::min(phi_i, robot_params_.max_steer_angle_ackermann);
 
   return k * phi_i;
 }
