@@ -424,8 +424,11 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
     }
   } else {
     steer_cmd = CalculateSteeringAngle(*msg, radius);
-    // Use minimum turn radius to switch between dual ackerman and spinning mode
-    if (radius < robot_params_.min_turn_radius) {
+    // Spin in place only when no forward/backward motion is commanded. When a
+    // linear velocity is present (e.g. teleop sending linear.x and angular.z
+    // together), stay in dual-ackerman and follow an arc with the steering
+    // clamped to the model maximum, so the linear component is not dropped.
+    if (std::abs(msg->linear.x) < 1e-6 && std::abs(msg->angular.z) > 1e-6) {
       motion_mode_ = MotionState::MOTION_MODE_SPINNING;
       robot_->SetMotionMode(MotionState::MOTION_MODE_SPINNING);
     } else {
