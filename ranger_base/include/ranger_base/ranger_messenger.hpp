@@ -96,6 +96,9 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   std::string odom_topic_name_;
   int update_rate_;
   bool publish_odom_tf_;
+  // when true, angular.z from /cmd_vel is treated as a direct steering-angle
+  // command (RC-like), decoupled from linear speed, instead of a yaw rate
+  bool direct_steer_ = false;
 
   uint8_t motion_mode_ = 0;
   bool parking_mode_;
