@@ -30,6 +30,8 @@ def generate_launch_description():
                                                  description='Simulation control loop update rate')
     robot_model_arg = DeclareLaunchArgument('robot_model', default_value='ranger_mini_v2',
                                            description='robot motion model')
+    steer_mode_arg = DeclareLaunchArgument('steer_mode', default_value='twist',
+                                           description="'twist' (yaw-rate) or 'direct' (RC-like steering angle)")
     ranger_base_node = launch_ros.actions.Node(
         package='ranger_base',
         executable='ranger_base_node',
@@ -45,6 +47,7 @@ def generate_launch_description():
                 'publish_odom_tf': launch.substitutions.LaunchConfiguration('publish_odom_tf'),
                 'update_rate': launch.substitutions.LaunchConfiguration('update_rate'),
                 'robot_model': launch.substitutions.LaunchConfiguration('robot_model'),
+                'steer_mode': launch.substitutions.LaunchConfiguration('steer_mode'),
         }])
 
     return LaunchDescription([
@@ -57,5 +60,6 @@ def generate_launch_description():
         publish_odom_tf_arg,
         update_rate_arg,
         robot_model_arg,
+        steer_mode_arg,
         ranger_base_node
     ])

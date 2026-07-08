@@ -68,6 +68,10 @@ void RangerROSMessenger::LoadParameters() {
   update_rate_ = node_->declare_parameter<int>("update_rate", 50);
   odom_topic_name_ = node_->declare_parameter<std::string>("odom_topic_name", "odom");
   publish_odom_tf_ = node_->declare_parameter<bool>("publish_odom_tf",false);
+  // "twist"  : angular.z is a yaw rate, steering is derived from the kinematics
+  // "direct" : angular.z is a steering angle (rad), RC-like, speed-independent
+  std::string steer_mode = node_->declare_parameter<std::string>("steer_mode", "twist");
+  direct_steer_ = (steer_mode == "direct");
 
   RCLCPP_INFO(node_->get_logger(),
       "Successfully loaded the following parameters: \n port_name: %s\n "
@@ -422,6 +426,12 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       motion_mode_ = MotionState::MOTION_MODE_PARALLEL;
       robot_->SetMotionMode(MotionState::MOTION_MODE_PARALLEL);
     }
+  } else if (direct_steer_) {
+    // RC-like: angular.z is a steering-angle command (rad), decoupled from
+    // speed. No auto-spin; the steering angle is clamped in the switch below.
+    steer_cmd = msg->angular.z;
+    motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+    robot_->SetMotionMode(MotionState::MOTION_MODE_DUAL_ACKERMAN);
   } else {
     steer_cmd = CalculateSteeringAngle(*msg, radius);
     // Spin in place only when no forward/backward motion is commanded. When a
