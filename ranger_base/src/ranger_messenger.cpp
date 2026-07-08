@@ -214,6 +214,13 @@ void RangerROSMessenger::PublishStateToROS() {
   {
     motion_mode_ = state.motion_mode_state.motion_mode;
 
+    // Track the chassis hardware parking mode reported over CAN (0x291). The
+    // chassis enters/leaves parking externally (e.g. via the RC controller);
+    // ROS only observes it here. TwistCmdCallback uses parking_mode_ to drop
+    // motion commands while parked (applied to Ranger Mini V2/V3, see guard).
+    parking_mode_ = (state.motion_mode_state.motion_mode ==
+                     RangerInterface::MotionMode::kPark);
+
     ranger_msgs::msg::MotionState motion_msg;
     motion_msg.header.stamp = current_time_;
     motion_msg.motion_mode = state.motion_mode_state.motion_mode;
