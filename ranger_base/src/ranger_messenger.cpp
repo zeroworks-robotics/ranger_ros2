@@ -412,8 +412,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
   double radius = 0.0;
 
   // analyze Twist msg and switch motion_mode
-  // check for parking mode, only applicable to RangerMiniV2
-  if (parking_mode_ && robot_type_ == RangerSubType::kRangerMiniV2) {
+  // check for parking mode, applicable to RangerMiniV2 / RangerMiniV3
+  if (parking_mode_ &&
+      (robot_type_ == RangerSubType::kRangerMiniV2 ||
+       robot_type_ == RangerSubType::kRangerMiniV3)) {
     return;
   } else if (msg->linear.y != 0) {
     // lateral component requested: V1 with no forward speed uses the dedicated
