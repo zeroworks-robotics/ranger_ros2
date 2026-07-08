@@ -172,7 +172,40 @@ void RangerROSMessenger::SetupSubscription() {
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
       "/cmd_vel", 5, std::bind(&RangerROSMessenger::TwistCmdCallback, this, std::placeholders::_1)
       );
+
+  // service to enter/leave the chassis parking mode
+  set_parking_srv_ = node_->create_service<std_srvs::srv::SetBool>(
+      "/set_parking_mode",
+      std::bind(&RangerROSMessenger::SetParkingModeCallback, this,
+                std::placeholders::_1, std::placeholders::_2));
+
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+}
+
+void RangerROSMessenger::SetParkingModeCallback(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+  // Parking mode is only supported on Ranger Mini V2/V3 (matches the guard in
+  // TwistCmdCallback and the feedback tracking in PublishStateToROS).
+  if (robot_type_ != RangerSubType::kRangerMiniV2 &&
+      robot_type_ != RangerSubType::kRangerMiniV3) {
+    response->success = false;
+    response->message = "Parking mode is only supported on Ranger Mini V2/V3";
+    return;
+  }
+
+  if (request->data) {
+    // enter parking; parking_mode_ is set from chassis feedback once the
+    // switch is confirmed, which then makes TwistCmdCallback drop /cmd_vel.
+    robot_->SetMotionMode(RangerInterface::MotionMode::kPark);
+    response->message = "Entering parking mode";
+  } else {
+    // leave parking; fall back to dual-ackermann. The next /cmd_vel will
+    // re-select the appropriate motion mode.
+    robot_->SetMotionMode(RangerInterface::MotionMode::kDualAckerman);
+    response->message = "Leaving parking mode";
+  }
+  response->success = true;
 }
 
 void RangerROSMessenger::PublishStateToROS() {
