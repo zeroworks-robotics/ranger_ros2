@@ -153,6 +153,7 @@ void RangerROSMessenger::LoadParameters() {
     }
   }
     parking_mode_ = false;
+    commanded_motion_mode_ = 0xFF;  // force the first cmd to issue SetMotionMode
 
 }
 
@@ -463,17 +464,14 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
     // motion on non-V1 robots is handled inside the PARALLEL case below).
     if (msg->linear.x == 0.0 && robot_type_ == RangerSubType::kRangerMiniV1) {
       motion_mode_ = MotionState::MOTION_MODE_SIDE_SLIP;
-      robot_->SetMotionMode(MotionState::MOTION_MODE_SIDE_SLIP);
     } else {
       motion_mode_ = MotionState::MOTION_MODE_PARALLEL;
-      robot_->SetMotionMode(MotionState::MOTION_MODE_PARALLEL);
     }
   } else if (direct_steer_) {
     // RC-like: angular.z is a steering-angle command (rad), decoupled from
     // speed. No auto-spin; the steering angle is clamped in the switch below.
     steer_cmd = msg->angular.z;
     motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
-    robot_->SetMotionMode(MotionState::MOTION_MODE_DUAL_ACKERMAN);
   } else {
     steer_cmd = CalculateSteeringAngle(*msg, radius);
     // Spin in place only when no forward/backward motion is commanded. When a
@@ -482,12 +480,20 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
     // clamped to the model maximum, so the linear component is not dropped.
     if (std::abs(msg->linear.x) < 1e-6 && std::abs(msg->angular.z) > 1e-6) {
       motion_mode_ = MotionState::MOTION_MODE_SPINNING;
-      robot_->SetMotionMode(MotionState::MOTION_MODE_SPINNING);
     } else {
       motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
-      robot_->SetMotionMode(MotionState::MOTION_MODE_DUAL_ACKERMAN);
     }
   }
+
+  // Only switch modes when the target actually changes. Re-sending the same
+  // mode every callback is wasted CAN traffic; more importantly a real switch
+  // makes the chassis reconfigure its steering for ~0.6 s (during which it
+  // ignores speed commands), so we must not keep re-issuing it.
+  if (motion_mode_ != commanded_motion_mode_) {
+    robot_->SetMotionMode(motion_mode_);
+    commanded_motion_mode_ = motion_mode_;
+  }
+
   // send motion command to robot
   switch (motion_mode_) {
     case MotionState::MOTION_MODE_DUAL_ACKERMAN: {

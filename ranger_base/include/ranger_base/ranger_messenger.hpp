@@ -105,6 +105,11 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   bool direct_steer_ = false;
 
   uint8_t motion_mode_ = 0;
+  // last motion mode actually commanded to the chassis, so we only send a
+  // SetMotionMode when it changes (a real mode switch makes the chassis spend
+  // ~0.6 s reconfiguring its steering, and it ignores speed commands until it
+  // settles). 0xFF = "nothing commanded yet" so the first command always sends.
+  uint8_t commanded_motion_mode_ = 0xFF;
   bool parking_mode_;
 
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
