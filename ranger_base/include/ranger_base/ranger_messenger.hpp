@@ -27,6 +27,7 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
+#include <std_srvs/srv/set_bool.hpp>
 
 //third libaray inclue
 #include "ugv_sdk/details/robot_base/ranger_base.hpp"
@@ -73,6 +74,9 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   void PublishStateToROS();
   void PublishSimStateToROS(double linear, double angular);
   void TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg);
+  void SetParkingModeCallback(
+      const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+      std::shared_ptr<std_srvs::srv::SetBool::Response> response);
   double CalculateSteeringAngle(geometry_msgs::msg::Twist msg, double& radius);
   void UpdateOdometry(double linear, double angular, double angle, double dt);
   geometry_msgs::msg::Quaternion createQuaternionMsgFromYaw(double yaw);
@@ -110,6 +114,8 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr battery_state_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
+
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr set_parking_srv_;
 
   std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 
