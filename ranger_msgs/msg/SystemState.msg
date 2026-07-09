@@ -5,10 +5,12 @@ uint8 VEHICLE_STATE_EXCEPTION = 2
 uint8 CONTROL_MODE_RC = 0
 uint8 CONTROL_MODE_CAN = 1
 
+# Values match ugv_sdk RangerInterface::MotionMode.
 uint8 MOTION_MODE_DUAL_ACKERMAN = 0
 uint8 MOTION_MODE_PARALLEL = 1
 uint8 MOTION_MODE_SPINNING = 2
-uint8 MOTION_MODE_SIDE_SLIP = 3
+uint8 MOTION_MODE_PARKING = 3
+uint8 MOTION_MODE_SIDE_SLIP = 4
 
 ########################################
 
