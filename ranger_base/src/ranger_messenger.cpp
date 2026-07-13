@@ -73,6 +73,13 @@ void RangerROSMessenger::LoadParameters() {
   std::string steer_mode = node_->declare_parameter<std::string>("steer_mode", "twist");
   direct_steer_ = (steer_mode == "direct");
 
+  // Anti-chatter for twist-driven motion-mode switching (see TwistCmdCallback).
+  mode_switch_min_dwell_ =
+      node_->declare_parameter<double>("mode_switch_min_dwell", 0.6);
+  spin_enter_vx_ = node_->declare_parameter<double>("spin_enter_vx", 1e-3);
+  spin_leave_vx_ = node_->declare_parameter<double>("spin_leave_vx", 3e-2);
+  last_mode_switch_time_ = node_->now();
+
   RCLCPP_INFO(node_->get_logger(),
       "Successfully loaded the following parameters: \n port_name: %s\n "
       "robot_model: %s\n odom_frame: %s\n base_frame: %s\n "
@@ -478,10 +485,25 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
     // linear velocity is present (e.g. teleop sending linear.x and angular.z
     // together), stay in dual-ackerman and follow an arc with the steering
     // clamped to the model maximum, so the linear component is not dropped.
-    if (std::abs(msg->linear.x) < 1e-6 && std::abs(msg->angular.z) > 1e-6) {
-      motion_mode_ = MotionState::MOTION_MODE_SPINNING;
+    //
+    // Hysteresis on the ackermann<->spinning boundary: a single threshold on
+    // linear.x means a velocity that lingers near zero (deceleration tail,
+    // approach jitter) flips the mode back and forth. Entering spin needs |vx|
+    // essentially zero (spin_enter_vx_), but leaving it needs |vx| to rise past
+    // a higher threshold (spin_leave_vx_), so the boundary can't chatter.
+    const bool want_rotation = std::abs(msg->angular.z) > 1e-6;
+    if (commanded_motion_mode_ == MotionState::MOTION_MODE_SPINNING) {
+      if (!want_rotation || std::abs(msg->linear.x) > spin_leave_vx_) {
+        motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+      } else {
+        motion_mode_ = MotionState::MOTION_MODE_SPINNING;
+      }
     } else {
-      motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+      if (want_rotation && std::abs(msg->linear.x) < spin_enter_vx_) {
+        motion_mode_ = MotionState::MOTION_MODE_SPINNING;
+      } else {
+        motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+      }
     }
   }
 
@@ -489,9 +511,22 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
   // mode every callback is wasted CAN traffic; more importantly a real switch
   // makes the chassis reconfigure its steering for ~0.6 s (during which it
   // ignores speed commands), so we must not keep re-issuing it.
+  //
+  // Minimum dwell: once we switch, hold the new mode for at least
+  // mode_switch_min_dwell_ seconds. A brief excursion across the decision
+  // boundary within that window keeps commanding the current mode instead of
+  // thrashing the chassis. 0xFF ("nothing commanded yet") always switches.
   if (motion_mode_ != commanded_motion_mode_) {
-    robot_->SetMotionMode(motion_mode_);
-    commanded_motion_mode_ = motion_mode_;
+    if (commanded_motion_mode_ == 0xFF ||
+        (node_->now() - last_mode_switch_time_).seconds() >=
+            mode_switch_min_dwell_) {
+      robot_->SetMotionMode(motion_mode_);
+      commanded_motion_mode_ = motion_mode_;
+      last_mode_switch_time_ = node_->now();
+    } else {
+      // still within the dwell window: keep the current mode this cycle
+      motion_mode_ = commanded_motion_mode_;
+    }
   }
 
   // send motion command to robot

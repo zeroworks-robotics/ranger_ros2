@@ -112,6 +112,16 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   uint8_t commanded_motion_mode_ = 0xFF;
   bool parking_mode_;
 
+  // Anti-chatter for twist-driven motion-mode switching (see TwistCmdCallback).
+  // A real switch costs the chassis ~0.6 s of steering reconfiguration, so we
+  // add hysteresis on the ackermann<->spinning boundary plus a minimum dwell
+  // time between switches so a velocity that lingers near zero can't thrash the
+  // chassis. All three are overridable parameters.
+  double mode_switch_min_dwell_ = 0.6;  // s; hold a mode at least this long after switching
+  double spin_enter_vx_ = 1e-3;         // m/s; enter spinning only when |vx| below this
+  double spin_leave_vx_ = 3e-2;         // m/s; leave spinning only when |vx| above this
+  rclcpp::Time last_mode_switch_time_;
+
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
