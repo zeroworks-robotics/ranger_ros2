@@ -187,6 +187,12 @@ void RangerROSMessenger::SetupSubscription() {
       std::bind(&RangerROSMessenger::ControlModeCallback, this, std::placeholders::_1)
       );
 
+  // motion-mode override (button toggle / spinning) from cmd_vel_manager
+  motion_mode_sub_ = node_->create_subscription<ranger_msgs::msg::MotionState>(
+      "/cmd_vel_manager/motion_state", 5,
+      std::bind(&RangerROSMessenger::MotionModeCallback, this, std::placeholders::_1)
+      );
+
   // service to enter/leave the chassis parking mode
   set_parking_srv_ = node_->create_service<std_srvs::srv::SetBool>(
       "/set_parking_mode",
@@ -202,6 +208,15 @@ void RangerROSMessenger::ControlModeCallback(
   RCLCPP_INFO(node_->get_logger(), "Setting chassis control mode: %u",
               static_cast<unsigned int>(msg->data));
   robot_->SetControlMode(msg->data);
+}
+
+void RangerROSMessenger::MotionModeCallback(
+    ranger_msgs::msg::MotionState::SharedPtr msg) {
+  // Record the requested mode; TwistCmdCallback applies it (flowing through the
+  // existing change-detection + dwell logic) so it doesn't fight the chassis.
+  external_motion_mode_ = msg->motion_mode;
+  RCLCPP_INFO(node_->get_logger(), "External motion mode requested: %u",
+              static_cast<unsigned int>(msg->motion_mode));
 }
 
 void RangerROSMessenger::SetParkingModeCallback(
@@ -521,6 +536,13 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
     }
   }
 
+  // External override: a mode requested via /cmd_vel_manager/motion_state wins
+  // over the twist-derived mode. It still flows through the change-detection and
+  // dwell logic below, so it can't fight the chassis or thrash the steering.
+  if (external_motion_mode_ >= 0) {
+    motion_mode_ = static_cast<uint8_t>(external_motion_mode_);
+  }
+
   // Only switch modes when the target actually changes. Re-sending the same
   // mode every callback is wasted CAN traffic; more importantly a real switch
   // makes the chassis reconfigure its steering for ~0.6 s (during which it
@@ -556,7 +578,11 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
-      steer_cmd = atan(msg->linear.y / msg->linear.x);
+      // atan(y/x) is nan when both are zero (possible now that PARALLEL can be
+      // forced via /cmd_vel_manager with no velocity); treat that as 0 steering.
+      steer_cmd = (msg->linear.x == 0.0 && msg->linear.y == 0.0)
+                      ? 0.0
+                      : atan(msg->linear.y / msg->linear.x);
 
       static double last_nonzero_x = 1.0; 
       

@@ -76,6 +76,7 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   void PublishSimStateToROS(double linear, double angular);
   void TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg);
   void ControlModeCallback(std_msgs::msg::UInt8::SharedPtr msg);
+  void MotionModeCallback(ranger_msgs::msg::MotionState::SharedPtr msg);
   void SetParkingModeCallback(
       const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
       std::shared_ptr<std_srvs::srv::SetBool::Response> response);
@@ -112,6 +113,9 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   // ~0.6 s reconfiguring its steering, and it ignores speed commands until it
   // settles). 0xFF = "nothing commanded yet" so the first command always sends.
   uint8_t commanded_motion_mode_ = 0xFF;
+  // Motion mode requested externally via /cmd_vel_manager/motion_state. When
+  // >= 0 it overrides the twist-derived mode in TwistCmdCallback; -1 = unset.
+  int external_motion_mode_ = -1;
   bool parking_mode_;
 
   // Anti-chatter for twist-driven motion-mode switching (see TwistCmdCallback).
@@ -132,6 +136,7 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
   rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr control_mode_sub_;
+  rclcpp::Subscription<ranger_msgs::msg::MotionState>::SharedPtr motion_mode_sub_;
 
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr set_parking_srv_;
 
