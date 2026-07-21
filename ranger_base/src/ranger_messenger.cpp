@@ -181,6 +181,12 @@ void RangerROSMessenger::SetupSubscription() {
       "/cmd_vel", 5, std::bind(&RangerROSMessenger::TwistCmdCallback, this, std::placeholders::_1)
       );
 
+  // control-mode command (raw CAN 0x421 value) from cmd_vel_manager
+  control_mode_sub_ = node_->create_subscription<std_msgs::msg::UInt8>(
+      "/cmd_vel_manager/control_mode", 5,
+      std::bind(&RangerROSMessenger::ControlModeCallback, this, std::placeholders::_1)
+      );
+
   // service to enter/leave the chassis parking mode
   set_parking_srv_ = node_->create_service<std_srvs::srv::SetBool>(
       "/set_parking_mode",
@@ -188,6 +194,14 @@ void RangerROSMessenger::SetupSubscription() {
                 std::placeholders::_1, std::placeholders::_2));
 
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_);
+}
+
+void RangerROSMessenger::ControlModeCallback(
+    std_msgs::msg::UInt8::SharedPtr msg) {
+  // Forward the raw control-mode value straight to the chassis (CAN 0x421).
+  RCLCPP_INFO(node_->get_logger(), "Setting chassis control mode: %u",
+              static_cast<unsigned int>(msg->data));
+  robot_->SetControlMode(msg->data);
 }
 
 void RangerROSMessenger::SetParkingModeCallback(
