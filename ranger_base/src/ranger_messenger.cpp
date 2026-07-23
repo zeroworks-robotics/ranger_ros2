@@ -488,6 +488,11 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
   double steer_cmd = 0.0;
   double radius = 0.0;
 
+  // ── Motion-mode selection is now handled by cmd_vel_manager ──────────────
+  // The mode is published on /cmd_vel_manager/motion_state and applied via
+  // external_motion_mode_ (see below). The driver's original velocity-based
+  // switching is disabled for now and kept here, commented out, for easy revert.
+  /*
   // analyze Twist msg and switch motion_mode
   // check for parking mode, applicable to RangerMiniV2 / RangerMiniV3
   if (parking_mode_ &&
@@ -535,10 +540,28 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       }
     }
   }
+  */
 
-  // External override: a mode requested via /cmd_vel_manager/motion_state wins
-  // over the twist-derived mode. It still flows through the change-detection and
-  // dwell logic below, so it can't fight the chassis or thrash the steering.
+  // Parking mode (set via the /set_parking_mode service) still halts commands on
+  // Mini V2/V3. Kept active; it is not part of the velocity-based selection.
+  if (parking_mode_ &&
+      (robot_type_ == RangerSubType::kRangerMiniV2 ||
+       robot_type_ == RangerSubType::kRangerMiniV3)) {
+    return;
+  }
+
+  // Steering angle is still needed so the DUAL_ACKERMAN case can arc when
+  // cmd_vel_manager selects that mode (this does not set motion_mode_).
+  if (direct_steer_) {
+    steer_cmd = msg->angular.z;
+  } else {
+    steer_cmd = CalculateSteeringAngle(*msg, radius);
+  }
+
+  // Motion mode comes from cmd_vel_manager (/cmd_vel_manager/motion_state); with
+  // the driver's own selection disabled above, this is the sole source of
+  // motion_mode_. It flows through the change-detection + dwell logic below so it
+  // can't thrash the chassis. -1 = nothing received yet -> keep the last mode.
   if (external_motion_mode_ >= 0) {
     motion_mode_ = static_cast<uint8_t>(external_motion_mode_);
   }
