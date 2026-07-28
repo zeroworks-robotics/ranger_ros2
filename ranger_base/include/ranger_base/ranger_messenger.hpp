@@ -76,7 +76,6 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   void PublishSimStateToROS(double linear, double angular);
   void TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg);
   void ControlModeCallback(std_msgs::msg::UInt8::SharedPtr msg);
-  void MotionModeCallback(ranger_msgs::msg::MotionState::SharedPtr msg);
   void SetParkingModeCallback(
       const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
       std::shared_ptr<std_srvs::srv::SetBool::Response> response);
@@ -113,18 +112,15 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   // ~0.6 s reconfiguring its steering, and it ignores speed commands until it
   // settles). 0xFF = "nothing commanded yet" so the first command always sends.
   uint8_t commanded_motion_mode_ = 0xFF;
-  // Motion mode requested externally via /cmd_vel_manager/motion_state. When
-  // >= 0 it overrides the twist-derived mode in TwistCmdCallback; -1 = unset.
-  int external_motion_mode_ = -1;
   bool parking_mode_;
 
-  // Anti-chatter for twist-driven motion-mode switching (see TwistCmdCallback).
-  // A real switch costs the chassis ~0.6 s of steering reconfiguration, so we
-  // add hysteresis on the ackermann<->spinning boundary plus a minimum dwell
-  // time between switches so a velocity that lingers near zero can't thrash the
-  // chassis. All three are overridable parameters.
+  // Twist-driven motion-mode selection (see TwistCmdCallback). A real switch
+  // costs the chassis ~0.6 s of steering reconfiguration, so on top of the
+  // deadzone there is hysteresis on the ackermann<->spinning boundary plus a
+  // minimum dwell time between switches, so a velocity that lingers near zero
+  // can't thrash the chassis. All three are overridable parameters.
+  double cmd_deadzone_ = 1e-2;          // m/s, rad/s; |axis| at or below this counts as zero
   double mode_switch_min_dwell_ = 0.6;  // s; hold a mode at least this long after switching
-  double spin_enter_vx_ = 1e-3;         // m/s; enter spinning only when |vx| below this
   double spin_leave_vx_ = 3e-2;         // m/s; leave spinning only when |vx| above this
   rclcpp::Time last_mode_switch_time_;
 
@@ -136,7 +132,6 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
   rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr control_mode_sub_;
-  rclcpp::Subscription<ranger_msgs::msg::MotionState>::SharedPtr motion_mode_sub_;
 
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr set_parking_srv_;
 

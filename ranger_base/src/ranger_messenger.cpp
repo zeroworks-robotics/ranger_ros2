@@ -19,6 +19,22 @@ namespace westonrobot {
 // double DegreeToRadian(double x) { return x * M_PI / 180.0; }
 // }  // namespace
 
+namespace {
+// TEMPORARY (track motion-mode-verify_20260728, Task 1.3) — remove in Task 4.3
+// together with the [mode-diag] logging in TwistCmdCallback.
+const char* MotionModeName(uint8_t mode) {
+  switch (mode) {
+    case MotionState::MOTION_MODE_DUAL_ACKERMAN: return "DUAL_ACKERMAN";
+    case MotionState::MOTION_MODE_PARALLEL:      return "PARALLEL";
+    case MotionState::MOTION_MODE_SPINNING:      return "SPINNING";
+    case MotionState::MOTION_MODE_PARKING:       return "PARKING";
+    case MotionState::MOTION_MODE_SIDE_SLIP:     return "SIDE_SLIP";
+    case 0xFF:                                   return "NONE";
+    default:                                     return "UNKNOWN";
+  }
+}
+}  // namespace
+
 ///////////////////////////////////////////////////////////////////////////////////
 RangerROSMessenger::RangerROSMessenger(rclcpp::Node::SharedPtr& node){
 
@@ -73,10 +89,11 @@ void RangerROSMessenger::LoadParameters() {
   std::string steer_mode = node_->declare_parameter<std::string>("steer_mode", "twist");
   direct_steer_ = (steer_mode == "direct");
 
-  // Anti-chatter for twist-driven motion-mode switching (see TwistCmdCallback).
+  // Twist-driven motion-mode selection (see TwistCmdCallback): deadzone below
+  // which a /cmd_vel axis counts as zero, plus anti-chatter thresholds.
+  cmd_deadzone_ = node_->declare_parameter<double>("cmd_deadzone", 1e-2);
   mode_switch_min_dwell_ =
       node_->declare_parameter<double>("mode_switch_min_dwell", 0.6);
-  spin_enter_vx_ = node_->declare_parameter<double>("spin_enter_vx", 1e-3);
   spin_leave_vx_ = node_->declare_parameter<double>("spin_leave_vx", 3e-2);
   last_mode_switch_time_ = node_->now();
 
@@ -187,12 +204,6 @@ void RangerROSMessenger::SetupSubscription() {
       std::bind(&RangerROSMessenger::ControlModeCallback, this, std::placeholders::_1)
       );
 
-  // motion-mode override (button toggle / spinning) from cmd_vel_manager
-  motion_mode_sub_ = node_->create_subscription<ranger_msgs::msg::MotionState>(
-      "/cmd_vel_manager/motion_state", 5,
-      std::bind(&RangerROSMessenger::MotionModeCallback, this, std::placeholders::_1)
-      );
-
   // service to enter/leave the chassis parking mode
   set_parking_srv_ = node_->create_service<std_srvs::srv::SetBool>(
       "/set_parking_mode",
@@ -208,15 +219,6 @@ void RangerROSMessenger::ControlModeCallback(
   RCLCPP_INFO(node_->get_logger(), "Setting chassis control mode: %u",
               static_cast<unsigned int>(msg->data));
   robot_->SetControlMode(msg->data);
-}
-
-void RangerROSMessenger::MotionModeCallback(
-    ranger_msgs::msg::MotionState::SharedPtr msg) {
-  // Record the requested mode; TwistCmdCallback applies it (flowing through the
-  // existing change-detection + dwell logic) so it doesn't fight the chassis.
-  external_motion_mode_ = msg->motion_mode;
-  RCLCPP_INFO(node_->get_logger(), "External motion mode requested: %u",
-              static_cast<unsigned int>(msg->motion_mode));
 }
 
 void RangerROSMessenger::SetParkingModeCallback(
@@ -488,82 +490,77 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
   double steer_cmd = 0.0;
   double radius = 0.0;
 
-  // ── Motion-mode selection is now handled by cmd_vel_manager ──────────────
-  // The mode is published on /cmd_vel_manager/motion_state and applied via
-  // external_motion_mode_ (see below). The driver's original velocity-based
-  // switching is disabled for now and kept here, commented out, for easy revert.
-  /*
-  // analyze Twist msg and switch motion_mode
-  // check for parking mode, applicable to RangerMiniV2 / RangerMiniV3
-  if (parking_mode_ &&
-      (robot_type_ == RangerSubType::kRangerMiniV2 ||
-       robot_type_ == RangerSubType::kRangerMiniV3)) {
-    return;
-  } else if (msg->linear.y != 0) {
-    // lateral component requested: V1 with no forward speed uses the dedicated
-    // side-slip mode; every other case uses parallel steering (pure lateral
-    // motion on non-V1 robots is handled inside the PARALLEL case below).
-    if (msg->linear.x == 0.0 && robot_type_ == RangerSubType::kRangerMiniV1) {
-      motion_mode_ = MotionState::MOTION_MODE_SIDE_SLIP;
-    } else {
-      motion_mode_ = MotionState::MOTION_MODE_PARALLEL;
-    }
-  } else if (direct_steer_) {
-    // RC-like: angular.z is a steering-angle command (rad), decoupled from
-    // speed. No auto-spin; the steering angle is clamped in the switch below.
-    steer_cmd = msg->angular.z;
-    motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
-  } else {
-    steer_cmd = CalculateSteeringAngle(*msg, radius);
-    // Spin in place only when no forward/backward motion is commanded. When a
-    // linear velocity is present (e.g. teleop sending linear.x and angular.z
-    // together), stay in dual-ackerman and follow an arc with the steering
-    // clamped to the model maximum, so the linear component is not dropped.
-    //
-    // Hysteresis on the ackermann<->spinning boundary: a single threshold on
-    // linear.x means a velocity that lingers near zero (deceleration tail,
-    // approach jitter) flips the mode back and forth. Entering spin needs |vx|
-    // essentially zero (spin_enter_vx_), but leaving it needs |vx| to rise past
-    // a higher threshold (spin_leave_vx_), so the boundary can't chatter.
-    const bool want_rotation = std::abs(msg->angular.z) > 1e-6;
-    if (commanded_motion_mode_ == MotionState::MOTION_MODE_SPINNING) {
-      if (!want_rotation || std::abs(msg->linear.x) > spin_leave_vx_) {
-        motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
-      } else {
-        motion_mode_ = MotionState::MOTION_MODE_SPINNING;
-      }
-    } else {
-      if (want_rotation && std::abs(msg->linear.x) < spin_enter_vx_) {
-        motion_mode_ = MotionState::MOTION_MODE_SPINNING;
-      } else {
-        motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
-      }
-    }
-  }
-  */
-
-  // Parking mode (set via the /set_parking_mode service) still halts commands on
-  // Mini V2/V3. Kept active; it is not part of the velocity-based selection.
+  // Parking mode (set via the /set_parking_mode service) halts commands on
+  // Mini V2/V3, regardless of the mode selection below.
   if (parking_mode_ &&
       (robot_type_ == RangerSubType::kRangerMiniV2 ||
        robot_type_ == RangerSubType::kRangerMiniV3)) {
     return;
   }
 
-  // Steering angle is still needed so the DUAL_ACKERMAN case can arc when
-  // cmd_vel_manager selects that mode (this does not set motion_mode_).
+  // Steering angle for the DUAL_ACKERMAN case.
   if (direct_steer_) {
     steer_cmd = msg->angular.z;
   } else {
     steer_cmd = CalculateSteeringAngle(*msg, radius);
   }
 
-  // Motion mode comes from cmd_vel_manager (/cmd_vel_manager/motion_state); with
-  // the driver's own selection disabled above, this is the sole source of
-  // motion_mode_. It flows through the change-detection + dwell logic below so it
-  // can't thrash the chassis. -1 = nothing received yet -> keep the last mode.
-  if (external_motion_mode_ >= 0) {
-    motion_mode_ = static_cast<uint8_t>(external_motion_mode_);
+  // ── Motion-mode selection from the commanded twist ───────────────────────
+  // The mode is derived here from /cmd_vel itself, so it works the same for
+  // every command source (joystick via cmd_vel_manager, teleop, nav stack):
+  //
+  //   lateral component        -> parallel (side-slip on Mini V1 with no vx)
+  //   rotation, no forward vel -> spinning (turn in place)
+  //   rotation + forward vel   -> dual-ackerman (follow an arc)
+  //   forward velocity only    -> dual-ackerman
+  //   everything at rest       -> hold the current mode
+  //
+  // Axes at or below cmd_deadzone_ count as zero, so command noise around zero
+  // can't trigger a mode switch.
+  const bool has_x = std::abs(msg->linear.x) > cmd_deadzone_;
+  const bool has_y = std::abs(msg->linear.y) > cmd_deadzone_;
+  const bool has_rot = std::abs(msg->angular.z) > cmd_deadzone_;
+
+  if (direct_steer_) {
+    // RC-like: angular.z is a steering-angle command, not a yaw rate, so there
+    // is no spin case; stay in dual-ackerman and let the angle steer the arc.
+    motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+  } else if (has_y) {
+    // lateral component requested: V1 with no forward speed uses the dedicated
+    // side-slip mode; every other case uses parallel steering (pure lateral
+    // motion on non-V1 robots is handled inside the PARALLEL case below).
+    if (!has_x && robot_type_ == RangerSubType::kRangerMiniV1) {
+      motion_mode_ = MotionState::MOTION_MODE_SIDE_SLIP;
+    } else {
+      motion_mode_ = MotionState::MOTION_MODE_PARALLEL;
+    }
+  } else if (has_rot) {
+    // Spin in place only when no forward/backward motion is commanded. With a
+    // linear velocity present (e.g. teleop sending linear.x and angular.z
+    // together), stay in dual-ackerman and follow an arc so the linear
+    // component is not dropped.
+    //
+    // Hysteresis on the ackermann<->spinning boundary: entering spin needs |vx|
+    // within the deadzone, but leaving it needs |vx| to rise past a higher
+    // threshold (spin_leave_vx_), so a velocity that lingers near zero (a
+    // deceleration tail, approach jitter) can't flip the mode back and forth.
+    if (commanded_motion_mode_ == MotionState::MOTION_MODE_SPINNING) {
+      motion_mode_ = (std::abs(msg->linear.x) > spin_leave_vx_)
+                         ? MotionState::MOTION_MODE_DUAL_ACKERMAN
+                         : MotionState::MOTION_MODE_SPINNING;
+    } else {
+      motion_mode_ = has_x ? MotionState::MOTION_MODE_DUAL_ACKERMAN
+                           : MotionState::MOTION_MODE_SPINNING;
+    }
+  } else if (has_x) {
+    motion_mode_ = MotionState::MOTION_MODE_DUAL_ACKERMAN;
+  } else {
+    // Nothing commanded: hold the mode the chassis is already in rather than
+    // falling back to dual-ackerman, so releasing the sticks between two
+    // movements doesn't cost a mode switch (~0.6 s of steering reconfiguration).
+    motion_mode_ = (commanded_motion_mode_ == 0xFF)
+                       ? MotionState::MOTION_MODE_DUAL_ACKERMAN
+                       : commanded_motion_mode_;
   }
 
   // Only switch modes when the target actually changes. Re-sending the same
@@ -575,14 +572,50 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
   // mode_switch_min_dwell_ seconds. A brief excursion across the decision
   // boundary within that window keeps commanding the current mode instead of
   // thrashing the chassis. 0xFF ("nothing commanded yet") always switches.
+  // ── TEMPORARY diagnostics (track motion-mode-verify_20260728, Task 1.3) ───
+  // Instruments the driver's *intent* for the on-hardware boundary sweeps.
+  // /motion_state carries chassis feedback, not what this callback decided, so
+  // without this there is no way to tell a driver-side flip from chassis lag.
+  //
+  // Deliberately transition-only: this callback runs at the /cmd_vel rate, and
+  // logging every message would flood the console and perturb the very timing
+  // the sweeps are measuring. Remove in Task 4.3.
+  //
+  // Dwell-suppressed switches are logged too — Phase 3 Task 3.4 needs them to
+  // distinguish a properly damped boundary from one that only looks stable
+  // because the dwell timer is masking chatter underneath.
+  static uint8_t diag_last_blocked_target = 0xFE;  // 0xFE = "nothing blocked"
   if (motion_mode_ != commanded_motion_mode_) {
     if (commanded_motion_mode_ == 0xFF ||
         (node_->now() - last_mode_switch_time_).seconds() >=
             mode_switch_min_dwell_) {
+      RCLCPP_INFO(node_->get_logger(),
+                  "[mode-diag] %.3f SWITCH %s -> %s | vx=%+.4f vy=%+.4f "
+                  "wz=%+.4f",
+                  node_->now().seconds(),
+                  MotionModeName(commanded_motion_mode_),
+                  MotionModeName(motion_mode_), msg->linear.x, msg->linear.y,
+                  msg->angular.z);
+      diag_last_blocked_target = 0xFE;
+
       robot_->SetMotionMode(motion_mode_);
       commanded_motion_mode_ = motion_mode_;
       last_mode_switch_time_ = node_->now();
     } else {
+      // Log only when the blocked target itself changes, not on every cycle of
+      // the dwell window, which would otherwise emit tens of lines per block.
+      if (motion_mode_ != diag_last_blocked_target) {
+        diag_last_blocked_target = motion_mode_;
+        RCLCPP_INFO(node_->get_logger(),
+                    "[mode-diag] %.3f DWELL-BLOCKED %s -> %s (%.3f s of %.3f s)"
+                    " | vx=%+.4f vy=%+.4f wz=%+.4f",
+                    node_->now().seconds(),
+                    MotionModeName(commanded_motion_mode_),
+                    MotionModeName(motion_mode_),
+                    (node_->now() - last_mode_switch_time_).seconds(),
+                    mode_switch_min_dwell_, msg->linear.x, msg->linear.y,
+                    msg->angular.z);
+      }
       // still within the dwell window: keep the current mode this cycle
       motion_mode_ = commanded_motion_mode_;
     }

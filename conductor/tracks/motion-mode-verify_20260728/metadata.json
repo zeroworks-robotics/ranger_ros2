@@ -1,0 +1,25 @@
+{
+  "id": "motion-mode-verify_20260728",
+  "title": "Verify cmd_vel-Driven Motion-Mode Selection",
+  "type": "feature",
+  "status": "in_progress",
+  "created": "2026-07-28T13:36:28.687269+09:00",
+  "updated": "2026-07-28T13:43:25.798086+09:00",
+  "phases": {
+    "total": 4,
+    "completed": 0
+  },
+  "tasks": {
+    "total": 15,
+    "completed": 3
+  },
+  "current_phase": 1,
+  "current_task": "1.4",
+  "blocked": {
+    "task": "1.4",
+    "reason": "No CAN interface or gs_usb/can_dev kernel modules on host or in the sm-dev container; the Ranger chassis is not connected.",
+    "blocks": "Task 1.4, the Phase 1 checkpoint, and all of Phases 2-4.",
+    "detected": "2026-07-28"
+  },
+  "commits": []
+}
