@@ -69,10 +69,34 @@ RangerROSMessenger::RangerROSMessenger(rclcpp::Node::SharedPtr& node){
 void RangerROSMessenger::Run() {
   rclcpp::Rate rate(update_rate_);
   while (rclcpp::ok()) {
+    MaintainControlMode();
     PublishStateToROS();
     rclcpp::spin_some(node_);
     rate.sleep();
   }
+}
+
+void RangerROSMessenger::MaintainControlMode() {
+  // Keep the chassis in the control mode this driver expects, without depending
+  // on any other node: publishing /cmd_vel must be enough to drive the robot.
+  //
+  // EnableCommandedMode() at connect time is a one-shot. The chassis can leave
+  // that mode on its own - RC takeover, an e-stop, a control-board reset - and
+  // once it has, it silently ignores motion commands. Previously the only thing
+  // re-asserting the mode was cmd_vel_manager, so the driver was not usable on
+  // its own. Re-sending the mode periodically is idempotent and costs one CAN
+  // frame per period.
+  //
+  // The value re-sent is target_control_mode_, which ControlModeCallback
+  // updates. An external commander therefore stays in charge while it is
+  // running, instead of being fought back to the parameter default every cycle.
+  if (control_mode_period_ <= 0.0) return;  // maintenance disabled
+
+  const rclcpp::Time now = node_->now();
+  if ((now - last_control_mode_send_).seconds() < control_mode_period_) return;
+
+  robot_->SetControlMode(target_control_mode_);
+  last_control_mode_send_ = now;
 }
 
 void RangerROSMessenger::LoadParameters() {
@@ -96,6 +120,17 @@ void RangerROSMessenger::LoadParameters() {
       node_->declare_parameter<double>("mode_switch_min_dwell", 0.6);
   spin_leave_vx_ = node_->declare_parameter<double>("spin_leave_vx", 3e-2);
   last_mode_switch_time_ = node_->now();
+
+  // Chassis control-mode maintenance (see MaintainControlMode). The defaults
+  // keep the chassis in CAN command mode with no other node running, so /cmd_vel
+  // on its own is enough to drive the robot. Set control_mode_period <= 0 to
+  // disable re-sending and leave the mode entirely to an external commander.
+  target_control_mode_ =
+      static_cast<uint8_t>(node_->declare_parameter<int>("control_mode",
+                                                         CONTROL_MODE_CAN));
+  control_mode_period_ =
+      node_->declare_parameter<double>("control_mode_period", 1.0);
+  last_control_mode_send_ = node_->now();
 
   RCLCPP_INFO(node_->get_logger(),
       "Successfully loaded the following parameters: \n port_name: %s\n "
@@ -215,10 +250,21 @@ void RangerROSMessenger::SetupSubscription() {
 
 void RangerROSMessenger::ControlModeCallback(
     std_msgs::msg::UInt8::SharedPtr msg) {
+  // An external commander (e.g. cmd_vel_manager) is taking over the control
+  // mode. Record it as the new target so MaintainControlMode keeps re-asserting
+  // this value rather than fighting it back to the parameter default on the
+  // next cycle. This topic is optional - the driver drives fine without it.
+  if (msg->data != target_control_mode_) {
+    RCLCPP_INFO(node_->get_logger(),
+                "Chassis control mode set externally: %u (was %u)",
+                static_cast<unsigned int>(msg->data),
+                static_cast<unsigned int>(target_control_mode_));
+  }
+  target_control_mode_ = msg->data;
+
   // Forward the raw control-mode value straight to the chassis (CAN 0x421).
-  RCLCPP_INFO(node_->get_logger(), "Setting chassis control mode: %u",
-              static_cast<unsigned int>(msg->data));
   robot_->SetControlMode(msg->data);
+  last_control_mode_send_ = node_->now();
 }
 
 void RangerROSMessenger::SetParkingModeCallback(
@@ -634,46 +680,25 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
-      // atan(y/x) is nan when both are zero (possible now that PARALLEL can be
-      // forced via /cmd_vel_manager with no velocity); treat that as 0 steering.
-      steer_cmd = (msg->linear.x == 0.0 && msg->linear.y == 0.0)
-                      ? 0.0
-                      : atan(msg->linear.y / msg->linear.x);
+      // Crab steering, decoupled from speed:
+      //   linear.y = normalized steering command in [-1, 1]. It is a *fraction
+      //              of the model's maximum parallel steering angle*, not a
+      //              velocity. +1 = full left (90 deg on the Minis), 0 =
+      //              straight ahead, -1 = full right. Sign follows REP-103,
+      //              where +y is to the left.
+      //   linear.x = speed along that heading, in m/s. Sign gives forward or
+      //              backward; zero means the wheels hold their angle without
+      //              driving.
+      //
+      // The previous form derived the angle from atan(y/x) and the speed from
+      // the magnitude of (x, y). That couples the two: the crab angle moved
+      // whenever the speed did, so a diagonal could not be held steady while
+      // varying the throttle - the whole point of parallel mode. Decoupling
+      // them makes y a steering wheel and x an accelerator.
+      const double y_norm = std::max(-1.0, std::min(1.0, msg->linear.y));
+      steer_cmd = y_norm * robot_params_.max_steer_angle_parallel;
 
-      static double last_nonzero_x = 1.0; 
-      
-      if (msg->linear.x != 0.0) {
-          last_nonzero_x = msg->linear.x; 
-      }
-
-      if (std::signbit(msg->linear.x))
-      {
-        steer_cmd = -steer_cmd;
-      }
-      
-      if (steer_cmd > robot_params_.max_steer_angle_parallel) {
-        steer_cmd = robot_params_.max_steer_angle_parallel;
-      }
-      if (steer_cmd < -robot_params_.max_steer_angle_parallel) {
-        steer_cmd = -robot_params_.max_steer_angle_parallel;
-      }
-      double vel = 1.0;
-      
-      if (msg->linear.x == 0.0 && msg->linear.y != 0.0) {
-          // std::cout << "MOTION_MODE_SIDE_SLIP" << std::endl;
-          
-          if (std::signbit(last_nonzero_x)) {
-              steer_cmd = -std::abs(steer_cmd); 
-          } else {
-              steer_cmd = std::abs(steer_cmd);
-          }
-          vel = msg->linear.y >= 0 ? 1.0 : -1.0;
-      } else {
-          vel = msg->linear.x >= 0 ? 1.0 : -1.0;
-      }
-      robot_->SetMotionCommand(vel * sqrt(msg->linear.x * msg->linear.x +
-                                          msg->linear.y * msg->linear.y),
-                               steer_cmd);
+      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_SPINNING: {

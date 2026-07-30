@@ -72,6 +72,7 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
  private:
   void LoadParameters();
   void SetupSubscription();
+  void MaintainControlMode();
   void PublishStateToROS();
   void PublishSimStateToROS(double linear, double angular);
   void TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg);
@@ -113,6 +114,14 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   // settles). 0xFF = "nothing commanded yet" so the first command always sends.
   uint8_t commanded_motion_mode_ = 0xFF;
   bool parking_mode_;
+
+  // Chassis control mode (CAN 0x421), maintained by the driver itself so that
+  // publishing /cmd_vel is enough to drive the robot with no other node
+  // running. ControlModeCallback retargets this when an external commander is
+  // present. See MaintainControlMode.
+  uint8_t target_control_mode_ = 0x01;  // CONTROL_MODE_CAN
+  double control_mode_period_ = 1.0;    // s; <= 0 disables periodic re-sending
+  rclcpp::Time last_control_mode_send_;
 
   // Twist-driven motion-mode selection (see TwistCmdCallback). A real switch
   // costs the chassis ~0.6 s of steering reconfiguration, so on top of the
