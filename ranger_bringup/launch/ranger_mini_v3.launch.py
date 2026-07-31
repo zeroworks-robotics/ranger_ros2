@@ -24,7 +24,7 @@ def generate_launch_description():
 
     simulated_robot_arg = DeclareLaunchArgument('simulated_robot', default_value='false',
                                                    description='Whether running with simulator')
-    publish_odom_tf_arg = DeclareLaunchArgument('publish_odom_tf', default_value='false',
+    publish_odom_tf_arg = DeclareLaunchArgument('publish_odom_tf', default_value='true',
                                                  description='Simulation control loop update rate')
     update_rate_arg = DeclareLaunchArgument('update_rate', default_value='50',
                                                  description='Simulation control loop update rate')
