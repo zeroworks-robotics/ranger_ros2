@@ -542,42 +542,32 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
-      steer_cmd = atan(msg->linear.y / msg->linear.x);
+      // In parallel steering all four wheels point the same way, so the chassis
+      // translates along the steering angle at the commanded speed: the body
+      // velocity is speed * (cos(steer), sin(steer)). Derive both straight from
+      // the requested velocity vector.
+      double direction = std::atan2(msg->linear.y, msg->linear.x);
+      double speed = std::hypot(msg->linear.x, msg->linear.y);
 
-      static double last_nonzero_x = 1.0; 
-      
-      if (msg->linear.x != 0.0) {
-          last_nonzero_x = msg->linear.x; 
+      // Steering cannot reach behind the robot, so a backward direction is
+      // expressed as the mirrored angle driven at negative speed.
+      if (direction > M_PI_2) {
+        direction -= M_PI;
+        speed = -speed;
+      } else if (direction < -M_PI_2) {
+        direction += M_PI;
+        speed = -speed;
       }
 
-      if (std::signbit(msg->linear.x))
-      {
-        steer_cmd = -steer_cmd;
-      }
-      
+      steer_cmd = direction;
       if (steer_cmd > robot_params_.max_steer_angle_parallel) {
         steer_cmd = robot_params_.max_steer_angle_parallel;
       }
       if (steer_cmd < -robot_params_.max_steer_angle_parallel) {
         steer_cmd = -robot_params_.max_steer_angle_parallel;
       }
-      double vel = 1.0;
-      
-      if (msg->linear.x == 0.0 && msg->linear.y != 0.0) {
-          // std::cout << "MOTION_MODE_SIDE_SLIP" << std::endl;
-          
-          if (std::signbit(last_nonzero_x)) {
-              steer_cmd = -std::abs(steer_cmd); 
-          } else {
-              steer_cmd = std::abs(steer_cmd);
-          }
-          vel = msg->linear.y >= 0 ? 1.0 : -1.0;
-      } else {
-          vel = msg->linear.x >= 0 ? 1.0 : -1.0;
-      }
-      robot_->SetMotionCommand(vel * sqrt(msg->linear.x * msg->linear.x +
-                                          msg->linear.y * msg->linear.y),
-                               steer_cmd);
+
+      robot_->SetMotionCommand(speed, steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_SPINNING: {
