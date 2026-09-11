@@ -29,7 +29,30 @@ std_msgs/Header header
 # system state
 uint8 vehicle_state
 uint8 control_mode
+
+# Frame 0x211 bytes [4..5]. On this model those two bytes only carry the
+# steering zero-point calibration flags (bit 0~3, one per wheel) and the
+# calibration timeout (bit 4); everything else in them is reserved. It is kept
+# for consumers that already read it - the faults are in error_code_full.
 uint16 error_code
+
+# Frame 0x211 bytes [4..7] packed big-endian, byte [4] most significant. The
+# manual defines the whole range as one unsigned int32, and the faults that
+# matter live in the two bytes error_code drops:
+#   byte [6] bit 0      driver status
+#   byte [6] bit 2~5    motor 5~8 driver communication
+#   byte [6] bit 6      over-temperature protection
+#   byte [6] bit 7      over-current protection
+#   byte [7] bit 0      battery undervoltage
+#   byte [7] bit 1      overvoltage protection
+#   byte [7] bit 2      remote control connection lost
+#   byte [7] bit 3~6    motor 1~4 driver communication
+#   byte [7] bit 7      emergency stop triggered
+# So a driver fault reads 0x00000100, a lost remote 0x00000004 and an emergency
+# stop 0x00000080. A captured run of this robot carried 0x100 for most of one
+# file, and none of it was visible through error_code.
+uint32 error_code_full
+
 float64 battery_voltage
 
 # motion state

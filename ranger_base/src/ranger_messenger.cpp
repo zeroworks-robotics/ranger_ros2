@@ -310,6 +310,7 @@ void RangerROSMessenger::PublishStateToROS() {
     system_msg.vehicle_state = state.system_state.vehicle_state;
     system_msg.control_mode = state.system_state.control_mode;
     system_msg.error_code = state.system_state.error_code;
+    system_msg.error_code_full = state.system_state.error_code_full;
     system_msg.battery_voltage = state.system_state.battery_voltage;
     system_msg.motion_mode = state.motion_mode_state.motion_mode;
     system_msg.feedback_count = core_feedback_count_;
