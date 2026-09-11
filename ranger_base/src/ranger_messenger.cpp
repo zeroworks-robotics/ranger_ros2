@@ -82,6 +82,19 @@ void RangerROSMessenger::LoadParameters() {
   spin_leave_vx_ = node_->declare_parameter<double>("spin_leave_vx", 3e-2);
   last_mode_switch_time_ = node_->now();
 
+  // "percent" (default) publishes the chassis' own 0~100 value on
+  // /battery_state.percentage, as this node always has; "ratio" publishes the
+  // 0~1 that sensor_msgs/BatteryState documents. /bms_state.battery_soc always
+  // stays 0~100, which its own message documents.
+  std::string battery_soc_unit =
+      node_->declare_parameter<std::string>("battery_soc_unit", "percent");
+  battery_soc_as_ratio_ = (battery_soc_unit == "ratio");
+  if (!battery_soc_as_ratio_ && battery_soc_unit != "percent") {
+    RCLCPP_WARN(node_->get_logger(),
+                "Unknown battery_soc_unit '%s', falling back to 'percent'",
+                battery_soc_unit.c_str());
+  }
+
   // Re-assert CAN command mode while the chassis sits in standby (see header).
   command_mode_retry_period_ =
       node_->declare_parameter<double>("command_mode_retry_period", 1.0);
@@ -383,7 +396,10 @@ void RangerROSMessenger::PublishStateToROS() {
     batt_msg.voltage = common_sensor_state.bms_basic_state.voltage;
     batt_msg.temperature = common_sensor_state.bms_basic_state.temperature;
     batt_msg.current = common_sensor_state.bms_basic_state.current;
-    batt_msg.percentage = common_sensor_state.bms_basic_state.battery_soc;
+    batt_msg.percentage = battery_soc_as_ratio_
+                              ? common_sensor_state.bms_basic_state.battery_soc /
+                                    100.0f
+                              : common_sensor_state.bms_basic_state.battery_soc;
     batt_msg.charge = std::numeric_limits<float>::quiet_NaN();
     batt_msg.capacity = std::numeric_limits<float>::quiet_NaN();
     batt_msg.design_capacity = std::numeric_limits<float>::quiet_NaN();

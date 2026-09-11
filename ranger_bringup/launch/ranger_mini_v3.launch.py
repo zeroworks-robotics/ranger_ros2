@@ -32,6 +32,10 @@ def generate_launch_description():
                                            description='robot motion model')
     steer_mode_arg = DeclareLaunchArgument('steer_mode', default_value='twist',
                                            description="'twist' (yaw-rate) or 'direct' (RC-like steering angle)")
+    battery_soc_unit_arg = DeclareLaunchArgument('battery_soc_unit', default_value='percent',
+                                           description="Unit of /battery_state.percentage: 'percent' (0~100, as the chassis reports) or 'ratio' (0~1, as sensor_msgs documents)")
+    command_mode_retry_period_arg = DeclareLaunchArgument('command_mode_retry_period', default_value='1.0',
+                                           description='Seconds between re-sending the CAN command mode request while the chassis reports standby; <= 0 disables')
     ranger_base_node = launch_ros.actions.Node(
         package='ranger_base',
         executable='ranger_base_node',
@@ -48,6 +52,8 @@ def generate_launch_description():
                 'update_rate': launch.substitutions.LaunchConfiguration('update_rate'),
                 'robot_model': launch.substitutions.LaunchConfiguration('robot_model'),
                 'steer_mode': launch.substitutions.LaunchConfiguration('steer_mode'),
+                'battery_soc_unit': launch.substitutions.LaunchConfiguration('battery_soc_unit'),
+                'command_mode_retry_period': launch.substitutions.LaunchConfiguration('command_mode_retry_period'),
 
         }])
 
@@ -62,5 +68,7 @@ def generate_launch_description():
         update_rate_arg,
         robot_model_arg,
         steer_mode_arg,
+        battery_soc_unit_arg,
+        command_mode_retry_period_arg,
         ranger_base_node
     ])

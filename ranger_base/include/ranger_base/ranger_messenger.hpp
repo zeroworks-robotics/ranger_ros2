@@ -125,6 +125,12 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   // CAN re-plugged), it stays in standby and silently drops every motion
   // command. Re-assert CAN mode while the chassis reports standby; never while
   // it reports RC, which has priority over the bus and belongs to the operator.
+  // sensor_msgs/BatteryState documents percentage as a 0~1 ratio, but the
+  // chassis reports 0~100 and this node has always published that raw value,
+  // so consumers are built around it. Keep the existing behaviour by default
+  // and let the fleet switch to the documented unit deliberately.
+  bool battery_soc_as_ratio_ = false;
+
   double command_mode_retry_period_ = 1.0;  // s; <= 0 disables the retry
   rclcpp::Time last_command_mode_request_;
 
