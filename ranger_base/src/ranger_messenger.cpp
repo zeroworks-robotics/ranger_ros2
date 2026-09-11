@@ -9,6 +9,8 @@
 
 #include "ranger_base/ranger_messenger.hpp"
 
+#include <algorithm>
+
 #include "ranger_base/kinematics_model.hpp"
 
 using namespace rclcpp;
@@ -455,6 +457,28 @@ void RangerROSMessenger::UpdateOdometry(double linear, double angular,
   }
 }
 
+namespace {
+// Manual, frame 0x111: the linear speed byte is valid over +-2000 mm/s, and
+// only over +-1000 mm/s once the steering angle passes 20 degrees. The limit
+// applies to the front/rear ackerman and the oblique (parallel) modes.
+constexpr double kSteerLimitThreshold = 0.349066;  // 20 degrees, in rad
+constexpr double kSpeedLimitAtFullSteer = 1.0;     // in m/s
+
+// Keep the commanded speed inside what the chassis accepts. Without this an
+// out-of-range command is silently cast to int16 by the SDK (value * 1000), so
+// e.g. a unit mix-up sending 40 m/s wraps around and drives the robot backwards
+// at full speed instead of saturating.
+double ClampLinearSpeed(double speed, double steer_angle, double max_speed) {
+  double limit = max_speed;
+  if (std::abs(steer_angle) > kSteerLimitThreshold) {
+    limit = std::min(limit, kSpeedLimitAtFullSteer);
+  }
+  if (speed > limit) return limit;
+  if (speed < -limit) return -limit;
+  return speed;
+}
+}  // namespace
+
 void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg) {
   double steer_cmd = 0.0;
   double radius = 0.0;
@@ -538,7 +562,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       if (steer_cmd < -robot_params_.max_steer_angle_ackermann) {
         steer_cmd = -robot_params_.max_steer_angle_ackermann;
       }
-      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(msg->linear.x, steer_cmd,
+                           robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
@@ -567,7 +594,9 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
         steer_cmd = -robot_params_.max_steer_angle_parallel;
       }
 
-      robot_->SetMotionCommand(speed, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(speed, steer_cmd, robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_SPINNING: {
