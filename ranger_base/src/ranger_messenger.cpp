@@ -230,18 +230,44 @@ void RangerROSMessenger::PublishStateToROS() {
 
   auto state = robot_->GetRobotState();
   auto actuator_state = robot_->GetActuatorState();
+  auto common_sensor_state = robot_->GetCommonSensorState();
+
+  // ugv_sdk stamps a feedback group when a CAN frame updates it and leaves the
+  // message bodies untouched until then, so an unstamped group means nothing
+  // has been received yet. Publishing it anyway hands consumers a zero-filled
+  // message that reads as a healthy idle robot - vehicle_state 0 is "normal",
+  // motion_mode 0 is a valid mode and the battery reads 0 V - which is
+  // indistinguishable from a chassis that is powered off or off the bus.
+  const bool core_received = state.time_stamp.time_since_epoch().count() != 0;
+  const bool actuator_received =
+      actuator_state.time_stamp.time_since_epoch().count() != 0;
+  const bool sensor_received =
+      common_sensor_state.time_stamp.time_since_epoch().count() != 0;
+
+  if (!core_received && !actuator_received && !sensor_received) {
+    // Keep the odometry clock current so the first real frame does not
+    // integrate over the whole waiting period.
+    last_time_ = current_time_;
+    RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000,
+                         "No CAN feedback received yet on %s, not publishing "
+                         "robot state",
+                         port_name_.c_str());
+    return;
+  }
 
   // update odometry
-  {
+  if (core_received) {
     double dt = (current_time_ - last_time_).seconds();
     UpdateOdometry(state.motion_state.linear_velocity,
                    state.motion_state.angular_velocity,
                    state.motion_state.steering_angle, dt);
     last_time_ = current_time_;
+  } else {
+    last_time_ = current_time_;
   }
 
   // publish system state
-  {
+  if (core_received) {
     ranger_msgs::msg::SystemState system_msg;
     system_msg.header.stamp = current_time_;
     system_msg.vehicle_state = state.system_state.vehicle_state;
@@ -254,7 +280,7 @@ void RangerROSMessenger::PublishStateToROS() {
   }
 
   // publish motion mode
-  {
+  if (core_received) {
     motion_mode_ = state.motion_mode_state.motion_mode;
 
     // Track the chassis hardware parking mode reported over CAN (0x291). The
@@ -272,7 +298,7 @@ void RangerROSMessenger::PublishStateToROS() {
   }
 
   // publish actuator state
-  {
+  if (actuator_received) {
     // RCLCPP_DEBUG(node_->get_logger(),"feedback", "Angle_5:%f Angle_6:%f Angle_7:%f Angle_8:%f",
     //                 actuator_state.motor_angles.angle_5,
     //                 actuator_state.motor_angles.angle_6,
@@ -331,9 +357,7 @@ void RangerROSMessenger::PublishStateToROS() {
   }
 
   // publish BMS state
-  {
-    auto common_sensor_state = robot_->GetCommonSensorState();
-
+  if (sensor_received) {
     sensor_msgs::msg::BatteryState batt_msg;
     batt_msg.header.stamp = current_time_;
     batt_msg.voltage = common_sensor_state.bms_basic_state.voltage;
