@@ -104,13 +104,8 @@ void RangerROSMessenger::LoadParameters() {
     robot_params_.wheelbase = RangerMiniV1Params::wheelbase;
     robot_params_.max_linear_speed = RangerMiniV1Params::max_linear_speed;
     robot_params_.max_angular_speed = RangerMiniV1Params::max_angular_speed;
-    robot_params_.max_speed_cmd = RangerMiniV1Params::max_speed_cmd;
-    robot_params_.max_steer_angle_central =
-        RangerMiniV1Params::max_steer_angle_central;
     robot_params_.max_steer_angle_parallel =
         RangerMiniV1Params::max_steer_angle_parallel;
-    robot_params_.max_round_angle = RangerMiniV1Params::max_round_angle;
-    robot_params_.min_turn_radius = RangerMiniV1Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV1Params::max_steer_angle_ackermann;
   } else {
@@ -121,13 +116,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV2Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV2Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV2Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV2Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV2Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV2Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV2Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV2Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV2Params::max_steer_angle_ackermann;
     }
@@ -138,13 +128,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV3Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV3Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV3Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV3Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV3Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV3Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV3Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV3Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV3Params::max_steer_angle_ackermann;
     }
@@ -155,13 +140,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerParams::wheelbase;
       robot_params_.max_linear_speed = RangerParams::max_linear_speed;
       robot_params_.max_angular_speed = RangerParams::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerParams::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerParams::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerParams::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerParams::max_round_angle;
-      robot_params_.min_turn_radius = RangerParams::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerParams::max_steer_angle_ackermann;
     }

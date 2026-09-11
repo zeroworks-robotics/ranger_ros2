@@ -54,12 +54,8 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
     double wheelbase;
     double max_linear_speed;
     double max_angular_speed;
-    double max_speed_cmd;
-    double max_steer_angle_central;
     double max_steer_angle_parallel;
     double max_steer_angle_ackermann;
-    double max_round_angle;
-    double min_turn_radius;
   };
 
   enum class RangerSubType { kRanger = 0, kRangerMiniV1, kRangerMiniV2 ,kRangerMiniV3};
