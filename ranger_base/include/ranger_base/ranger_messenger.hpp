@@ -36,6 +36,7 @@
 
 //user msg include
 #include <ranger_msgs/msg/system_state.hpp>
+#include <ranger_msgs/msg/bms_state.hpp>
 #include <ranger_msgs/msg/motion_state.hpp>
 #include <ranger_msgs/msg/actuator_state_array.hpp>
 
@@ -139,12 +140,15 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   uint32_t core_feedback_count_ = 0;
   SdkTimePoint last_actuator_stamp_{};
   uint32_t actuator_feedback_count_ = 0;
+  SdkTimePoint last_sensor_stamp_{};
+  uint32_t sensor_feedback_count_ = 0;
 
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr battery_state_pub_;
+  rclcpp::Publisher<ranger_msgs::msg::BmsState>::SharedPtr bms_state_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
 

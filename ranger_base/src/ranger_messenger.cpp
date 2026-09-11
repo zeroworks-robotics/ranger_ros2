@@ -182,6 +182,8 @@ void RangerROSMessenger::SetupSubscription() {
   odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>(odom_topic_name_, 10);
   battery_state_pub_ =
       node_->create_publisher<sensor_msgs::msg::BatteryState>("/battery_state", 10);
+  bms_state_pub_ =
+      node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
 
   // subscriber
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
@@ -278,6 +280,10 @@ void RangerROSMessenger::PublishStateToROS() {
   if (actuator_state.time_stamp != last_actuator_stamp_) {
     last_actuator_stamp_ = actuator_state.time_stamp;
     ++actuator_feedback_count_;
+  }
+  if (common_sensor_state.time_stamp != last_sensor_stamp_) {
+    last_sensor_stamp_ = common_sensor_state.time_stamp;
+    ++sensor_feedback_count_;
   }
 
   // Keep the chassis out of standby. It boots into standby and only leaves it
@@ -409,6 +415,20 @@ void RangerROSMessenger::PublishStateToROS() {
     batt_msg.present = std::numeric_limits<uint8_t>::quiet_NaN();
 
     battery_state_pub_->publish(batt_msg);
+
+    // The chassis reports a state of health that sensor_msgs/BatteryState has
+    // no field for, and it has to be logged, so mirror the frame on a message
+    // of our own instead of bending BatteryState's documented units.
+    ranger_msgs::msg::BmsState bms_msg;
+    bms_msg.header.stamp = current_time_;
+    bms_msg.battery_soc = common_sensor_state.bms_basic_state.battery_soc;
+    bms_msg.battery_soh = common_sensor_state.bms_basic_state.battery_soh;
+    bms_msg.voltage = common_sensor_state.bms_basic_state.voltage;
+    bms_msg.current = common_sensor_state.bms_basic_state.current;
+    bms_msg.temperature = common_sensor_state.bms_basic_state.temperature;
+    bms_msg.feedback_count = sensor_feedback_count_;
+
+    bms_state_pub_->publish(bms_msg);
   }
 }
 
