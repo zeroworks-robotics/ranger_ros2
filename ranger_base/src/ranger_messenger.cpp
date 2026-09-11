@@ -271,6 +271,11 @@ void RangerROSMessenger::PublishStateToROS() {
     last_time_ = current_time_;
   }
 
+  if (state.time_stamp != last_core_stamp_) {
+    last_core_stamp_ = state.time_stamp;
+    ++core_feedback_count_;
+  }
+
   // Keep the chassis out of standby. It boots into standby and only leaves it
   // once it receives a control-mode command; the one sent while connecting is
   // lost if the chassis was not on the bus yet, and then every motion command
@@ -297,6 +302,7 @@ void RangerROSMessenger::PublishStateToROS() {
     system_msg.error_code = state.system_state.error_code;
     system_msg.battery_voltage = state.system_state.battery_voltage;
     system_msg.motion_mode = state.motion_mode_state.motion_mode;
+    system_msg.feedback_count = core_feedback_count_;
 
     system_state_pub_->publish(system_msg);
   }

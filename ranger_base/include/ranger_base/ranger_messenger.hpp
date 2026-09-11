@@ -131,6 +131,13 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   double command_mode_retry_period_ = 1.0;  // s; <= 0 disables the retry
   rclcpp::Time last_command_mode_request_;
 
+  // Counts distinct core-feedback updates so consumers have a liveness signal:
+  // the published values can stay identical for minutes while the bus is
+  // healthy, so only this tells a live chassis from a silent one. ugv_sdk
+  // stamps the group on every update, so a changed stamp is one update.
+  SdkTimePoint last_core_stamp_{};
+  uint32_t core_feedback_count_ = 0;
+
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
