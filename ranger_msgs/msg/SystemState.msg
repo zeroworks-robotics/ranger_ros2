@@ -1,9 +1,19 @@
+# Values match the RANGER MINI 3.0 manual, frame 0x211 byte[0].
+# The chassis reports only 0x00 and 0x02; there is no 0x01 for this model, so
+# the ESTOP constant that the AgileX family enum carries is not declared here.
+# An e-stop shows up as VEHICLE_STATE_EXCEPTION, and the bit that tells it
+# apart (0x211 byte[7] bit7) is not reachable through error_code - ugv_sdk
+# reads only byte[4..5] of the 4-byte error message.
 uint8 VEHICLE_STATE_NORMAL = 0
-uint8 VEHICLE_STATE_ESTOP = 1
 uint8 VEHICLE_STATE_EXCEPTION = 2
 
-uint8 CONTROL_MODE_RC = 0
+# Values match the manual, frame 0x211 byte[1], and ugv_sdk AgxControlMode.
+# 0x02 (UART) exists in the family enum but not in this model's manual and has
+# never been observed, so it is left undeclared: treat any other value as
+# unknown rather than mapping it.
+uint8 CONTROL_MODE_STANDBY = 0
 uint8 CONTROL_MODE_CAN = 1
+uint8 CONTROL_MODE_RC = 3
 
 # Values match ugv_sdk RangerInterface::MotionMode.
 uint8 MOTION_MODE_DUAL_ACKERMAN = 0
