@@ -82,6 +82,11 @@ void RangerROSMessenger::LoadParameters() {
   spin_leave_vx_ = node_->declare_parameter<double>("spin_leave_vx", 3e-2);
   last_mode_switch_time_ = node_->now();
 
+  // Re-assert CAN command mode while the chassis sits in standby (see header).
+  command_mode_retry_period_ =
+      node_->declare_parameter<double>("command_mode_retry_period", 1.0);
+  last_command_mode_request_ = node_->now();
+
   RCLCPP_INFO(node_->get_logger(),
       "Successfully loaded the following parameters: \n port_name: %s\n "
       "robot_model: %s\n odom_frame: %s\n base_frame: %s\n "
@@ -264,6 +269,23 @@ void RangerROSMessenger::PublishStateToROS() {
     last_time_ = current_time_;
   } else {
     last_time_ = current_time_;
+  }
+
+  // Keep the chassis out of standby. It boots into standby and only leaves it
+  // once it receives a control-mode command; the one sent while connecting is
+  // lost if the chassis was not on the bus yet, and then every motion command
+  // is silently dropped. RC mode is left alone: the remote has priority over
+  // the bus and taking it back would fight the operator.
+  if (core_received && command_mode_retry_period_ > 0.0 &&
+      state.system_state.control_mode ==
+          ranger_msgs::msg::SystemState::CONTROL_MODE_STANDBY &&
+      (current_time_ - last_command_mode_request_).seconds() >=
+          command_mode_retry_period_) {
+    robot_->EnableCommandedMode();
+    last_command_mode_request_ = current_time_;
+    RCLCPP_INFO_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000,
+                         "Chassis reports standby control mode, re-sending the "
+                         "CAN command mode request");
   }
 
   // publish system state

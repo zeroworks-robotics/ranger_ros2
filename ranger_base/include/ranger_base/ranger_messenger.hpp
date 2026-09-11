@@ -122,6 +122,15 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   double spin_leave_vx_ = 3e-2;         // m/s; leave spinning only when |vx| above this
   rclcpp::Time last_mode_switch_time_;
 
+  // The chassis boots into standby and only leaves it when it receives a
+  // control-mode command, which the node sends once while connecting. If the
+  // chassis is not on the bus yet at that moment (powered on later, rebooted,
+  // CAN re-plugged), it stays in standby and silently drops every motion
+  // command. Re-assert CAN mode while the chassis reports standby; never while
+  // it reports RC, which has priority over the bus and belongs to the operator.
+  double command_mode_retry_period_ = 1.0;  // s; <= 0 disables the retry
+  rclcpp::Time last_command_mode_request_;
+
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
