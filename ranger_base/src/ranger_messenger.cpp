@@ -275,6 +275,10 @@ void RangerROSMessenger::PublishStateToROS() {
     last_core_stamp_ = state.time_stamp;
     ++core_feedback_count_;
   }
+  if (actuator_state.time_stamp != last_actuator_stamp_) {
+    last_actuator_stamp_ = actuator_state.time_stamp;
+    ++actuator_feedback_count_;
+  }
 
   // Keep the chassis out of standby. It boots into standby and only leaves it
   // once it receives a control-mode command; the one sent while connecting is
@@ -340,6 +344,7 @@ void RangerROSMessenger::PublishStateToROS() {
 
     ranger_msgs::msg::ActuatorStateArray actuator_msg;
     actuator_msg.header.stamp = current_time_;
+    actuator_msg.feedback_count = actuator_feedback_count_;
 
     // Ranger has 4 wheels, each with a drive motor and a steering motor (8 in
     // total). speed_1~4 map to drive motors (actuator id 0~3) and angle_5~8 map
