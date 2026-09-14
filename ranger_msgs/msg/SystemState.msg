@@ -57,3 +57,17 @@ float64 battery_voltage
 
 # motion state
 uint8 motion_mode
+
+# Number of distinct chassis feedback updates seen on the CAN bus for this
+# group, incremented once per update and wrapping at 2^32 (about 2.7 years at
+# the default 50 Hz). The chassis has no rolling counter of its own and this
+# node republishes its last known state at a fixed rate, so a consumer cannot
+# tell a live bus from a dead one by looking at the values: they can legitimately
+# stay identical for minutes. Watch this field instead - it stops advancing
+# within one or two publish periods of the feedback stopping.
+# A published message always carries a count of at least 1: the node does not
+# publish until the group has been updated at least once, and the counter is
+# incremented before publishing. A 0 therefore means the field was not written
+# at all - an older publisher whose message a newer ranger_msgs deserialised -
+# and never means "the bus is dead". Keep that ordering if this is changed.
+uint32 feedback_count

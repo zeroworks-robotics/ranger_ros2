@@ -130,6 +130,19 @@ void RangerROSMessenger::LoadParameters() {
                                                          CONTROL_MODE_CAN));
   control_mode_period_ =
       node_->declare_parameter<double>("control_mode_period", 1.0);
+
+  // "percent" (default) publishes the chassis' own 0~100 value on
+  // /battery_state.percentage, as this node always has; "ratio" publishes the
+  // 0~1 that sensor_msgs/BatteryState documents. /bms_state.battery_soc always
+  // stays 0~100, which its own message documents.
+  std::string battery_soc_unit =
+      node_->declare_parameter<std::string>("battery_soc_unit", "percent");
+  battery_soc_as_ratio_ = (battery_soc_unit == "ratio");
+  if (!battery_soc_as_ratio_ && battery_soc_unit != "percent") {
+    RCLCPP_WARN(node_->get_logger(),
+                "Unknown battery_soc_unit '%s', falling back to 'percent'",
+                battery_soc_unit.c_str());
+  }
   last_control_mode_send_ = node_->now();
 
   RCLCPP_INFO(node_->get_logger(),
@@ -227,6 +240,8 @@ void RangerROSMessenger::SetupSubscription() {
   odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>(odom_topic_name_, 10);
   battery_state_pub_ =
       node_->create_publisher<sensor_msgs::msg::BatteryState>("/battery_state", 10);
+  bms_state_pub_ =
+      node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
 
   // subscriber
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
@@ -319,6 +334,19 @@ void RangerROSMessenger::PublishStateToROS() {
   const bool sensor_received =
       common_sensor_state.time_stamp.time_since_epoch().count() != 0;
 
+  if (state.time_stamp != last_core_stamp_) {
+    last_core_stamp_ = state.time_stamp;
+    ++core_feedback_count_;
+  }
+  if (actuator_state.time_stamp != last_actuator_stamp_) {
+    last_actuator_stamp_ = actuator_state.time_stamp;
+    ++actuator_feedback_count_;
+  }
+  if (common_sensor_state.time_stamp != last_sensor_stamp_) {
+    last_sensor_stamp_ = common_sensor_state.time_stamp;
+    ++sensor_feedback_count_;
+  }
+
   if (!core_received && !actuator_received && !sensor_received) {
     // Keep the odometry clock current so the first real frame does not
     // integrate over the whole waiting period.
@@ -351,6 +379,7 @@ void RangerROSMessenger::PublishStateToROS() {
     system_msg.error_code_full = state.system_state.error_code_full;
     system_msg.battery_voltage = state.system_state.battery_voltage;
     system_msg.motion_mode = state.motion_mode_state.motion_mode;
+    system_msg.feedback_count = core_feedback_count_;
 
     system_state_pub_->publish(system_msg);
   }
@@ -388,6 +417,7 @@ void RangerROSMessenger::PublishStateToROS() {
 
     ranger_msgs::msg::ActuatorStateArray actuator_msg;
     actuator_msg.header.stamp = current_time_;
+    actuator_msg.feedback_count = actuator_feedback_count_;
 
     // Ranger has 4 wheels, each with a drive motor and a steering motor (8 in
     // total). speed_1~4 map to drive motors (actuator id 0~3) and angle_5~8 map
@@ -439,7 +469,10 @@ void RangerROSMessenger::PublishStateToROS() {
     batt_msg.voltage = common_sensor_state.bms_basic_state.voltage;
     batt_msg.temperature = common_sensor_state.bms_basic_state.temperature;
     batt_msg.current = common_sensor_state.bms_basic_state.current;
-    batt_msg.percentage = common_sensor_state.bms_basic_state.battery_soc;
+    batt_msg.percentage = battery_soc_as_ratio_
+                              ? common_sensor_state.bms_basic_state.battery_soc /
+                                    100.0f
+                              : common_sensor_state.bms_basic_state.battery_soc;
     batt_msg.charge = std::numeric_limits<float>::quiet_NaN();
     batt_msg.capacity = std::numeric_limits<float>::quiet_NaN();
     batt_msg.design_capacity = std::numeric_limits<float>::quiet_NaN();
@@ -452,6 +485,20 @@ void RangerROSMessenger::PublishStateToROS() {
     batt_msg.present = std::numeric_limits<uint8_t>::quiet_NaN();
 
     battery_state_pub_->publish(batt_msg);
+
+    // The chassis reports a state of health that sensor_msgs/BatteryState has
+    // no field for, and it has to be logged, so mirror the frame on a message
+    // of our own instead of bending BatteryState's documented units.
+    ranger_msgs::msg::BmsState bms_msg;
+    bms_msg.header.stamp = current_time_;
+    bms_msg.battery_soc = common_sensor_state.bms_basic_state.battery_soc;
+    bms_msg.battery_soh = common_sensor_state.bms_basic_state.battery_soh;
+    bms_msg.voltage = common_sensor_state.bms_basic_state.voltage;
+    bms_msg.current = common_sensor_state.bms_basic_state.current;
+    bms_msg.temperature = common_sensor_state.bms_basic_state.temperature;
+    bms_msg.feedback_count = sensor_feedback_count_;
+
+    bms_state_pub_->publish(bms_msg);
   }
 }
 
