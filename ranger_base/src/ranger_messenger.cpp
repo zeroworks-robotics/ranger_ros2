@@ -316,17 +316,23 @@ void RangerROSMessenger::PublishStateToROS() {
   const bool sensor_received =
       common_sensor_state.time_stamp.time_since_epoch().count() != 0;
 
+  // Skip 0 on wrap: the counters promise a published value of at least 1, and a
+  // consumer reads 0 as "this field was never written" - an older publisher.
+  // Without this the promise holds only because nothing is published before the
+  // first frame, which makes it a side effect of the publish gate rather than a
+  // property of the counter, and it breaks for one message every wrap.
+  auto bump = [](uint32_t& c) { if (++c == 0) c = 1; };
   if (state.time_stamp != last_core_stamp_) {
     last_core_stamp_ = state.time_stamp;
-    ++core_feedback_count_;
+    bump(core_feedback_count_);
   }
   if (actuator_state.time_stamp != last_actuator_stamp_) {
     last_actuator_stamp_ = actuator_state.time_stamp;
-    ++actuator_feedback_count_;
+    bump(actuator_feedback_count_);
   }
   if (common_sensor_state.time_stamp != last_sensor_stamp_) {
     last_sensor_stamp_ = common_sensor_state.time_stamp;
-    ++sensor_feedback_count_;
+    bump(sensor_feedback_count_);
   }
 
   if (!core_received && !actuator_received && !sensor_received) {

@@ -65,9 +65,13 @@ uint8 motion_mode
 # tell a live bus from a dead one by looking at the values: they can legitimately
 # stay identical for minutes. Watch this field instead - it stops advancing
 # within one or two publish periods of the feedback stopping.
-# A published message always carries a count of at least 1: the node does not
-# publish until the group has been updated at least once, and the counter is
-# incremented before publishing. A 0 therefore means the field was not written
-# at all - an older publisher whose message a newer ranger_msgs deserialised -
-# and never means "the bus is dead". Keep that ordering if this is changed.
+# A published message always carries a count of at least 1. The counter skips 0
+# when it wraps, so this holds for every message rather than only until the
+# first wrap. A 0 therefore means the field was not written at all - an older
+# publisher whose message a newer ranger_msgs deserialised - and never means
+# "the bus is dead".
+#
+# Consumers use that to tell an old publisher from a live one, so the guarantee
+# is part of the contract rather than an implementation detail: keep the skip if
+# the counter changes.
 uint32 feedback_count

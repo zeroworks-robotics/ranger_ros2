@@ -19,5 +19,6 @@ float32 temperature       # degrees Celsius (byte[6..7], 0.1 degree units)
 # chassis sends far more slowly than the rest (500 ms per the manual, about
 # 250 ms measured), and whose values can legitimately hold still for minutes -
 # on a captured run all four readings held one combination for 481.6 s while
-# parked at full charge. A published count is always at least 1.
+# parked at full charge. A published count is always at least 1, including
+# across a wrap - see SystemState.feedback_count.
 uint32 feedback_count
