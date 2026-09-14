@@ -26,6 +26,14 @@ steer() {  # 조향 모터(id 4~7) 중 첫 번째 각도. --field 는 배열 인
   timeout 5 ros2 topic echo /actuator_state --once 2>/dev/null \
     | grep -oP 'motor_angles: \K[-0-9.e+]+' | sed -n 5p
 }
+# 명령을 유지한 채 스트림을 받아 "마지막(=정착) 조향각"을 돌려준다.
+# --once 를 특정 시점에 한 번 찍으면 조향이 아직 출발 전이거나 이동 중일 수 있다.
+# 실섀시에서 이 때문에 정상 동작이 0.006 같은 값으로 읽혀 FAIL 로 보였다.
+steer_settled() {  # steer_settled <스트림 초>
+  timeout "$1" ros2 topic echo /actuator_state 2>/dev/null \
+    | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
+    | awk 'NR%8==5 {v=$0} END{print v}'
+}
 steer_all() {  # 조향 4축 전부 (id 4~7)
   timeout 5 ros2 topic echo /actuator_state --once 2>/dev/null \
     | grep -oP 'motor_angles: \K[-0-9.e+]+' | sed -n '5,8p' | tr '\n' ' '
@@ -68,8 +76,8 @@ case "${1:-}" in
   for c in "0.2 1.0 1.570" "0.2 -0.5 -0.785" "0.0 1.0 1.570"; do
     set -- $c; x=$1; y=$2; exp=$3
     stop
-    ang=$(drive 6 "{linear: {x: $x, y: $y}}" steer)
-    mm=$(field /motion_state motion_mode)
+    ( timeout 9 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: $y}}" >/dev/null 2>&1 ) &
+    pid=$!; ang=$(steer_settled 8); mm=$(field /motion_state motion_mode); wait $pid 2>/dev/null
     if near "$ang" "$exp" 0.08; then ok "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"
     else bad "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"; fi
   done
@@ -77,7 +85,8 @@ case "${1:-}" in
   hdr "1b. x 의존성 — y 가 같으면 x 가 달라도 조향각이 같아야 함"
   for x in 0.1 0.3 0.5; do
     stop
-    ang=$(drive 6 "{linear: {x: $x, y: 0.3}}" steer)
+    ( timeout 9 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: 0.3}}" >/dev/null 2>&1 ) &
+    pid=$!; ang=$(steer_settled 8); wait $pid 2>/dev/null
     if near "$ang" 0.471 0.08; then ok "x=$x y=0.3 → 조향 $ang (기대 0.471)"
     else bad "x=$x y=0.3 → 조향 $ang (기대 0.471)  ※ x 에 따라 변하면 옛 의미"; fi
   done
