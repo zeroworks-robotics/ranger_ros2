@@ -183,8 +183,39 @@ case "${1:-}" in
   [ "$mm" != "3" ] && ok "파킹 해제 (mode=$mm)" || bad "파킹 해제 실패"
   stop
   ;;
+1d)
+  hdr "1d. 진단 — 조향각 시간 궤적"
+  info "조향이 목표에 도달하는 데 걸리는 시간을 잽니다. 로봇이 10초씩 두 번 움직입니다."
+  ask "공간 확보됐습니까?"
+  for c in "0.2 1.0 1.570" "0.2 -0.5 -0.785"; do
+    set -- $c; x=$1; y=$2; exp=$3
+    stop
+    echo "  --- x=$x y=$y (기대 $exp)"
+    ( timeout 11 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: $y}}" >/dev/null 2>&1 ) &
+    pid=$!
+    # --once 를 반복하면 호출마다 2초씩 걸려 궤적이 뭉개진다. 스트림을 받아서
+    # 조향 모터(5번째 motor_angles) 값만 뽑고 파이썬으로 경과시간을 붙인다.
+    timeout 10 ros2 topic echo /actuator_state 2>/dev/null \
+      | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
+      | python3 -u -c "
+import sys, time
+t0 = time.time(); n = 0; last = None
+for line in sys.stdin:
+    n += 1
+    if n % 8 != 5:      # 8축 중 5번째 = 조향 모터 첫 축
+        continue
+    v = float(line)
+    t = time.time() - t0
+    if last is None or abs(v - last) > 0.005 or int(t*2) % 4 == 0:
+        print('      t=%5.1fs  조향=%+.3f' % (t, v)); last = v
+" | awk 'NR<=25'
+    wait $pid 2>/dev/null
+  done
+  stop
+  info "목표 도달 시각을 보고 본 테스트의 샘플링 시점을 정합니다."
+  ;;
 *)
-  echo "사용법: $0 <0-7> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
+  echo "사용법: $0 <0-7|1d> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적진단 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
 esac
 echo; echo "  합계: PASS $PASS / FAIL $FAIL"
 [ "$FAIL" -eq 0 ] || exit 1
