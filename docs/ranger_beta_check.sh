@@ -17,6 +17,13 @@ ok()   { echo -e "  \033[32mPASS\033[0m  $1"; PASS=$((PASS+1)); }
 bad()  { echo -e "  \033[31mFAIL\033[0m  $1"; FAIL=$((FAIL+1)); }
 info() { echo "        $1"; }
 hdr()  { echo; echo "=== $1 ==="; }
+verdict() {  # verdict <라벨> <기대> <최종> <최대절대> <도달여부> <샘플수>
+  local lbl="$1" exp="$2" last="$3" mx="$4" hit="$5" n="$6"
+  if [ "${n:-0}" -lt 5 ]; then bad "$lbl → 피드백 없음 (샘플 ${n:-0}개)"; return; fi
+  if near "$last" "$exp" 0.08; then ok "$lbl → 조향 $last (기대 $exp)"
+  elif [ "$hit" = "1" ]; then bad "$lbl → 도달했다가 이탈: 최종 $last, 최대 $mx (기대 $exp)"
+  else bad "$lbl → 미도달: 최종 $last, 최대 $mx (기대 $exp)"; fi
+}
 ask()  { read -rp "  >>> $1 [Enter 계속 / Ctrl-C 중단] "; }
 
 field() {  # field <topic> <--field 경로>
@@ -29,10 +36,17 @@ steer() {  # 조향 모터(id 4~7) 중 첫 번째 각도. --field 는 배열 인
 # 명령을 유지한 채 스트림을 받아 "마지막(=정착) 조향각"을 돌려준다.
 # --once 를 특정 시점에 한 번 찍으면 조향이 아직 출발 전이거나 이동 중일 수 있다.
 # 실섀시에서 이 때문에 정상 동작이 0.006 같은 값으로 읽혀 FAIL 로 보였다.
-steer_settled() {  # steer_settled <스트림 초>
+steer_trace() {  # steer_trace <초> <기대값> <허용오차>  →  "최종 최대절대 도달여부 샘플수"
+  # 한 시점만 찍으면 출발 전인지 이동 중인지 이미 도달했는지 구분이 안 된다.
+  # 명령을 유지한 채 궤적 전체를 받아 요약한다: 마지막(정착) 값, 이동한 최대치,
+  # 창 안에서 기대값에 한 번이라도 닿았는지.
   timeout "$1" ros2 topic echo /actuator_state 2>/dev/null \
     | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
-    | awk 'NR%8==5 {v=$0} END{print v}'
+    | awk -v tgt="$2" -v tol="$3" '
+        NR%8==5 { v=$0; last=v; n++
+                  a=(v<0?-v:v); if(a>mx) mx=a
+                  d=v-tgt; if(d<0)d=-d; if(d<=tol) hit=1 }
+        END { printf "%.3f %.3f %d %d", last, mx, hit+0, n+0 }'
 }
 steer_all() {  # 조향 4축 전부 (id 4~7)
   timeout 5 ros2 topic echo /actuator_state --once 2>/dev/null \
@@ -77,18 +91,16 @@ case "${1:-}" in
     set -- $c; x=$1; y=$2; exp=$3
     stop
     ( timeout 9 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: $y}}" >/dev/null 2>&1 ) &
-    pid=$!; ang=$(steer_settled 8); mm=$(field /motion_state motion_mode); wait $pid 2>/dev/null
-    if near "$ang" "$exp" 0.08; then ok "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"
-    else bad "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"; fi
+    pid=$!; read -r lastv maxv hit n < <(steer_trace 8 "$exp" 0.08); wait $pid 2>/dev/null
+    verdict "x=$x y=$y" "$exp" "$lastv" "$maxv" "$hit" "$n"
   done
   stop
   hdr "1b. x 의존성 — y 가 같으면 x 가 달라도 조향각이 같아야 함"
   for x in 0.1 0.3 0.5; do
     stop
     ( timeout 9 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: 0.3}}" >/dev/null 2>&1 ) &
-    pid=$!; ang=$(steer_settled 8); wait $pid 2>/dev/null
-    if near "$ang" 0.471 0.08; then ok "x=$x y=0.3 → 조향 $ang (기대 0.471)"
-    else bad "x=$x y=0.3 → 조향 $ang (기대 0.471)  ※ x 에 따라 변하면 옛 의미"; fi
+    pid=$!; read -r lastv maxv hit n < <(steer_trace 8 0.471 0.08); wait $pid 2>/dev/null
+    verdict "x=$x y=0.3" 0.471 "$lastv" "$maxv" "$hit" "$n"
   done
   stop
   ;;
