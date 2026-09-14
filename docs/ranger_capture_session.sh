@@ -27,6 +27,12 @@ check_cmd_vel_owner() {
   if [ "${n:-0}" -gt 0 ]; then
     echo "  !! /cmd_vel 을 이미 발행하는 노드가 ${n} 개 있습니다."
     echo "     명령이 번갈아 들어가면 결과가 실행마다 달라집니다. 멈추고 다시 실행하세요."
+    # 대화형이 아니면(자동화·원격 실행) 묻지 않고 멈춘다. 조용히 기다리다
+    # 세션이 끊기는 것보다, 중단하고 이유를 남기는 쪽이 낫다.
+    if [ ! -t 0 ]; then
+      echo "     대화형 터미널이 아니므로 중단합니다. 발행자를 멈추고 다시 실행하세요."
+      exit 1
+    fi
     read -r -p "     그래도 진행할까요? [y/N] " a
     [ "$a" = "y" ] || exit 1
   fi
@@ -50,11 +56,11 @@ record)
     /system_state /motion_state /actuator_state /odom /bms_state /battery_state /cmd_vel \
     > "$D/bag.log" 2>&1 &
   BAG_PID=$!
-  trap 'kill -INT "$BAG_PID" 2>/dev/null; kill "$CAN_PID" 2>/dev/null' INT TERM
+  trap 'kill -INT "$BAG_PID" 2>/dev/null; kill -INT "$CAN_PID" 2>/dev/null' INT TERM
   # 로봇을 주행시키는 것은 사람이 한다 — 이 스크립트는 기록만 한다.
   echo "    지금 로봇을 평소대로 운전하세요. 끝나면 자동으로 멈춥니다 (Ctrl-C 도 가능)."
   sleep "$SEC"
-  kill -INT "$BAG_PID" 2>/dev/null; kill "$CAN_PID" 2>/dev/null
+  kill -INT "$BAG_PID" 2>/dev/null; kill -INT "$CAN_PID" 2>/dev/null
   wait 2>/dev/null
   echo
   echo "    CAN 프레임 $(wc -l < "$D/can_$STAMP.log") 줄"
@@ -85,28 +91,52 @@ record)
     timeout 3 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist \
       '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.4}}' >/dev/null 2>&1
     sleep 0.3
-    kill "$CP" 2>/dev/null; wait "$CP" 2>/dev/null
+    kill -INT "$CP" 2>/dev/null; wait "$CP" 2>/dev/null
     awk '
       # (1725...) can0 141 [8] 02 00 ...   /   (...) can0 281 [8] xx xx ...
+      #
+      # 0x281 은 모터 속도 4개를 int16 big-endian mm/s 로 싣는다. "바이트가 0이
+      # 아니면 움직인 것"으로 판정하면 1 mm/s 에서 참이 되어, 주행 시작이 아니라
+      # 양자화 시작점을 재게 된다(실캡처에서 그 기준의 중위가 0.017초였다).
+      # 그래서 실제 속도로 디코드해 여러 임계에서 동시에 잰다. 임계 없이는
+      # 이 양이 정의되지 않으므로 임계를 항상 같이 찍는다.
+      function hx(c,   p) { p = index("0123456789abcdef", tolower(c)); return p - 1 }
+      function byte(h)    { return hx(substr(h,1,1)) * 16 + hx(substr(h,2,2)) }
+      function i16(hi,lo,   v) { v = byte(hi) * 256 + byte(lo); if (v > 32767) v -= 65536; return v }
+      BEGIN { split("0.02 0.05 0.10", THR, " ") }
       {
-        ts=$1; gsub(/[()]/,"",ts)
-        id=$3
-        if (id=="141" && $5=="02") { t141=ts; seen=1; next }     # data[0]=02 = SPINNING
-        if (id=="281" && seen && !done) {
-          nz=0
-          for (i=5; i<=NF; i++) if ($i != "00") nz=1
-          if (nz) { printf "  %d회차: %.3f 초\n", run, ts-t141; done=1 }
+        ts = $1; gsub(/[()]/, "", ts)
+        id = $3
+        if (id == "141" && $5 == "02") { t141 = ts; seen = 1; next }   # data[0]=02 = SPINNING
+        if (id == "281" && seen) {
+          mx = 0
+          for (k = 0; k < 4; k++) {
+            v = i16($(5 + 2*k), $(6 + 2*k)) / 1000.0     # mm/s -> m/s
+            if (v < 0) v = -v
+            if (v > mx) mx = v
+          }
+          if (mx > 0 && nz == "") nz = ts - t141
+          for (k in THR) if (hit[k] == "" && mx > THR[k] + 0.0) hit[k] = ts - t141
         }
       }
-      END { if (!seen) print "  " run "회차: 0x141 SPINNING 송신이 안 잡혔습니다 (모드 전환이 없었음)"
-            else if (!done) print "  " run "회차: 전환 후 비영 0x281 이 없습니다 (바퀴가 안 돌았음)" }
+      END {
+        if (!seen) { print "  " run "회차: 0x141 SPINNING 송신이 안 잡혔습니다 (모드 전환이 없었음)"; exit }
+        line = "  " run "회차:"
+        line = line sprintf("  비영 %s", (nz == "") ? "-" : sprintf("%.3f", nz))
+        for (k = 1; k <= 3; k++)
+          line = line sprintf("   >%s m/s %s", THR[k], (hit[k] == "") ? "-" : sprintf("%.3f", hit[k]))
+        print line
+        if (hit[3] == "") print "        (상위 임계 미도달 — 회전이 덜 붙었거나 창이 짧습니다)"
+      }
     ' run="$i" "$LOG"
     rm -f "$LOG"
     sleep 1
   done
   echo
+  echo "    각 줄은 같은 전환을 네 기준으로 잰 것입니다. 하나만 인용하지 말고 임계를 같이 적으세요."
+  echo "    실캡처(RC 주행)에서는 비영 0.017초 / >0.05 0.374초 / >0.1 0.892초로 임계에 지배됐습니다."
+  echo "    이 스크립트는 20 Hz 계단 입력을 주므로 조작자 램프가 섞이지 않아 더 작게 나옵니다."
   echo "    시뮬레이터는 조향 정착에서 유도해 약 0.35초, BLF 관측(0x291 전환 플래그)은 최대 0.57초입니다."
-  echo "    이 측정은 같은 버스에서 송신과 피드백을 직접 재므로 둘 중 어느 쪽이 맞는지 가릅니다."
   ;;
 *)
   sed -n '2,17p' "$0"
