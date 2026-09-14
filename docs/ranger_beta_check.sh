@@ -17,6 +17,20 @@ ok()   { echo -e "  \033[32mPASS\033[0m  $1"; PASS=$((PASS+1)); }
 bad()  { echo -e "  \033[31mFAIL\033[0m  $1"; FAIL=$((FAIL+1)); }
 info() { echo "        $1"; }
 hdr()  { echo; echo "=== $1 ==="; }
+# /cmd_vel 을 다른 노드가 같이 쏘면 명령이 번갈아 들어가 조향이 0 근처에서 진동한다.
+# 실기에서 이 때문에 정상 동작이 실행마다 무작위로 FAIL 로 보였다.
+check_cmd_vel_owner() {
+  local n
+  n=$(ros2 topic info /cmd_vel 2>/dev/null | awk '/Publisher count/{print $3}')
+  if [ "${n:-0}" -gt 0 ]; then
+    echo
+    echo "  !! /cmd_vel 을 이미 발행하는 노드가 ${n} 개 있습니다."
+    echo "     그 명령과 번갈아 들어가면 조향이 0 근처에서 진동해 결과가 실행마다 달라집니다."
+    ros2 topic info /cmd_vel --verbose 2>/dev/null | awk '/Node name/{print "     발행자: " $3}' | sort -u
+    echo "     해당 노드를 멈추고 다시 실행하세요 (또는 토픽을 분리해 테스트)."
+    ask "그래도 진행하시겠습니까?"
+  fi
+}
 verdict() {  # verdict <라벨> <기대> <최종> <최대절대> <도달여부> <샘플수>
   local lbl="$1" exp="$2" last="$3" mx="$4" hit="$5" n="$6"
   if [ "${n:-0}" -lt 5 ]; then bad "$lbl → 피드백 없음 (샘플 ${n:-0}개)"; return; fi
@@ -86,6 +100,8 @@ case "${1:-}" in
   hdr "1. PARALLEL 조향 — linear.y 는 정규화 조향 [-1,1] (최대 1.570 rad)"
   cm=$(field /system_state control_mode)
   [ "$cm" = "1" ] && ok "control_mode=1 (CAN)" || { bad "control_mode=$cm — 리모컨을 CAN 모드로 두세요"; exit 1; }
+  check_cmd_vel_owner
+  check_cmd_vel_owner
   ask "로봇이 움직입니다. 공간 확보됐습니까?"
   for c in "0.2 1.0 1.570" "0.2 -0.5 -0.785" "0.0 1.0 1.570"; do
     set -- $c; x=$1; y=$2; exp=$3
@@ -106,6 +122,7 @@ case "${1:-}" in
   ;;
 2)
   hdr "2. 속도 클램프 — 0x111 linear 이 ±2000 mm/s 를 넘지 않아야 함"
+  check_cmd_vel_owner
   ask "과대 명령을 넣습니다. 바퀴를 띄웠거나 공간이 충분합니까?"
   for c in "5.0 0.0 2000" "40.0 0.0 2000" "2.0 3.0 1000"; do
     set -- $c; x=$1; wz=$2; lim=$3
@@ -238,6 +255,7 @@ for line in sys.stdin:
 1e)
   hdr "1e. 진단 — 속도별 조향 도달 (x 를 쓸면서 y 고정)"
   info "조향이 속도에 따라 못 가는지 봅니다. x 마다 12초씩, 총 1분 남짓 움직입니다."
+  check_cmd_vel_owner
   info "각 구간의 조향 궤적과 모드/에러를 함께 기록합니다."
   ask "공간 확보됐습니까?"
   for x in 0.0 0.1 0.2 0.3 0.5; do
