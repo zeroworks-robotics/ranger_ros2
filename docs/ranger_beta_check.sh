@@ -34,6 +34,16 @@ pub() {    # pub <초> <twist yaml>
   timeout "$1" ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "$2" >/dev/null 2>&1
 }
 stop() { timeout 1 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{}" >/dev/null 2>&1; sleep 1; }
+# 명령을 "주는 도중에" 측정한다. 명령이 끊기면 섀시는 0x111 수신 타임아웃(500ms)으로
+# 정지하고 바퀴도 복귀하므로, 끝난 뒤에 읽으면 전부 0 으로 보인다.
+drive() {  # drive <초> <twist yaml> <측정명령...>
+  local dur="$1" cmd="$2"; shift 2
+  ( timeout "$dur" ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "$cmd" >/dev/null 2>&1 ) &
+  local pid=$!
+  sleep 2
+  "$@"
+  wait $pid 2>/dev/null
+}
 near() {   # near <실측> <기대> <허용오차>
   awk -v a="$1" -v b="$2" -v t="$3" 'BEGIN{d=a-b; if(d<0)d=-d; exit !(d<=t)}'
 }
@@ -57,16 +67,17 @@ case "${1:-}" in
   ask "로봇이 움직입니다. 공간 확보됐습니까?"
   for c in "0.2 1.0 1.570" "0.2 -0.5 -0.785" "0.0 1.0 1.570"; do
     set -- $c; x=$1; y=$2; exp=$3
-    stop; pub 3 "{linear: {x: $x, y: $y}}"
-    ang=$(steer); mm=$(field /motion_state motion_mode)
-    if near "$ang" "$exp" 0.08; then ok "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm, 4축: $(steer_all))"
+    stop
+    ang=$(drive 6 "{linear: {x: $x, y: $y}}" steer)
+    mm=$(field /motion_state motion_mode)
+    if near "$ang" "$exp" 0.08; then ok "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"
     else bad "x=$x y=$y → 조향 $ang (기대 $exp, mode=$mm)"; fi
   done
   stop
   hdr "1b. x 의존성 — y 가 같으면 x 가 달라도 조향각이 같아야 함"
   for x in 0.1 0.3 0.5; do
-    stop; pub 3 "{linear: {x: $x, y: 0.3}}"
-    ang=$(steer)
+    stop
+    ang=$(drive 6 "{linear: {x: $x, y: 0.3}}" steer)
     if near "$ang" 0.471 0.08; then ok "x=$x y=0.3 → 조향 $ang (기대 0.471)"
     else bad "x=$x y=0.3 → 조향 $ang (기대 0.471)  ※ x 에 따라 변하면 옛 의미"; fi
   done
@@ -152,18 +163,20 @@ case "${1:-}" in
 7)
   hdr "7. 회귀 — 기존 동작"
   ask "로봇이 움직입니다. 공간 확보됐습니까?"
-  stop; pub 3 "{linear: {x: 0.15}}"
-  printf "        ackerman  vx=%s mode=%s\n" "$(field /odom twist.twist.linear.x)" "$(field /motion_state motion_mode)"
-  stop; pub 3 "{linear: {x: 0.15}, angular: {z: 0.3}}"
-  printf "        arc       vx=%s wz=%s mode=%s\n" "$(field /odom twist.twist.linear.x)" "$(field /odom twist.twist.angular.z)" "$(field /motion_state motion_mode)"
-  stop; pub 3 "{angular: {z: 0.4}}"
-  printf "        spinning  wz=%s mode=%s (기대 mode=2)\n" "$(field /odom twist.twist.angular.z)" "$(field /motion_state motion_mode)"
+  stop
+  vx=$(drive 6 "{linear: {x: 0.15}}" field /odom twist.twist.linear.x)
+  printf "        ackerman  vx=%s mode=%s\n" "$vx" "$(field /motion_state motion_mode)"
+  stop
+  vx=$(drive 6 "{linear: {x: 0.15}, angular: {z: 0.3}}" field /odom twist.twist.linear.x)
+  printf "        arc       vx=%s mode=%s\n" "$vx" "$(field /motion_state motion_mode)"
+  stop
+  wz=$(drive 6 "{angular: {z: 0.4}}" field /odom twist.twist.angular.z)
+  printf "        spinning  wz=%s mode=%s (기대 mode=2)\n" "$wz" "$(field /motion_state motion_mode)"
   stop
   ros2 service call /set_parking_mode std_srvs/srv/SetBool "{data: true}" >/dev/null; sleep 2
   mm=$(field /motion_state motion_mode)
   [ "$mm" = "3" ] && ok "파킹 진입 (mode=3)" || bad "파킹 진입 실패 (mode=$mm)"
-  pub 2 "{linear: {x: 0.15}}"
-  vx=$(field /odom twist.twist.linear.x)
+  vx=$(drive 5 "{linear: {x: 0.15}}" field /odom twist.twist.linear.x)
   near "$vx" 0 0.02 && ok "파킹 중 명령 무시 (vx=$vx)" || bad "파킹 중에 움직임 (vx=$vx)"
   ros2 service call /set_parking_mode std_srvs/srv/SetBool "{data: false}" >/dev/null; sleep 2
   mm=$(field /motion_state motion_mode)
