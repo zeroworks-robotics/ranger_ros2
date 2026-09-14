@@ -1,0 +1,5 @@
+In file included from /root/git/ranger_ros2/ranger_base/src/ranger_messenger.cpp:12:
+/root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp: In member function ‘void westonrobot::SpinningModel::operator()(const state_type&, westonrobot::SpinningModel::state_type&, double)’:
+/root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp:90:37: warning: unused parameter ‘x’ [-Wunused-parameter]
+   90 |   void operator()(const state_type& x, state_type& xd, double) {
+      |                   ~~~~~~~~~~~~~~~~~~^

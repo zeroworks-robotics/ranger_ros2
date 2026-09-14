@@ -1,9 +1,18 @@
 # Values match the RANGER MINI 3.0 manual, frame 0x211 byte[0].
-# The chassis reports only 0x00 and 0x02; there is no 0x01 for this model, so
-# the ESTOP constant that the AgileX family enum carries is not declared here.
-# An e-stop shows up as VEHICLE_STATE_EXCEPTION, and the bit that tells it
-# apart (0x211 byte[7] bit7) is not reachable through error_code - ugv_sdk
-# reads only byte[4..5] of the 4-byte error message.
+# The manual lists 0x00 and 0x02 only, and the ESTOP constant that the AgileX
+# family enum carries is not declared here: an e-stop shows up as
+# VEHICLE_STATE_EXCEPTION, and the bit that tells it apart (0x211 byte[7] bit7)
+# is not reachable through error_code - ugv_sdk reads only byte[4..5] of the
+# 4-byte error message.
+#
+# 0x01 is not declared either, but it does occur: one capture holds 123
+# consecutive frames of it (2.56 s out of 4.4 hours), so a consumer can meet it.
+# What it means is unknown. error_code_full read 0x100 throughout that window
+# while the frames on either side read 0x180, which looks like the e-stop bit
+# clearing, except the same 0x100 appears with vehicle_state 0 (18042 frames)
+# and 2 (40561 frames) elsewhere in the same captures - the fault bits do not
+# determine this byte. Treat any value that is not 0 or 2 as unknown rather
+# than mapping it to a name.
 uint8 VEHICLE_STATE_NORMAL = 0
 uint8 VEHICLE_STATE_EXCEPTION = 2
 
@@ -60,8 +69,10 @@ uint8 motion_mode
 
 # Number of distinct chassis feedback updates seen on the CAN bus for this
 # group, incremented once per update and wrapping at 2^32 (about 2.7 years at
-# the default 50 Hz). The chassis has no rolling counter of its own and this
-# node republishes its last known state at a fixed rate, so a consumer cannot
+# the default 50 Hz). The chassis does carry rolling counters, in byte[7] of
+# 0x231 and 0x241, but ugv_sdk drops them at the parsing step and ranger_base
+# never publishes those frames, so they are out of reach upstream. This node
+# republishes its last known state at a fixed rate, so a consumer cannot
 # tell a live bus from a dead one by looking at the values: they can legitimately
 # stay identical for minutes. Watch this field instead - it stops advancing
 # within one or two publish periods of the feedback stopping.

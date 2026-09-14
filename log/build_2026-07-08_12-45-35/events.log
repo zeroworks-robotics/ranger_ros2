@@ -1,0 +1,133 @@
+[0.000000] (-) TimerEvent: {}
+[0.000053] (-) JobUnselected: {'identifier': 'ranger_bringup'}
+[0.000184] (-) JobUnselected: {'identifier': 'ranger_msgs'}
+[0.000200] (ranger_base) JobQueued: {'identifier': 'ranger_base', 'dependencies': OrderedDict([('ranger_msgs', '/root/git/ranger_ros2/install/ranger_msgs')])}
+[0.000219] (ranger_base) JobStarted: {'identifier': 'ranger_base'}
+[0.005774] (ranger_base) JobProgress: {'identifier': 'ranger_base', 'progress': 'cmake'}
+[0.006220] (ranger_base) JobProgress: {'identifier': 'ranger_base', 'progress': 'build'}
+[0.006772] (ranger_base) Command: {'cmd': ['/usr/bin/cmake', '--build', '/root/git/ranger_ros2/build/ranger_base', '--', '-j24', '-l24'], 'cwd': '/root/git/ranger_ros2/build/ranger_base', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/root/git/ranger_ros2/install/ranger_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_base'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble')]), 'shell': False}
+[0.042162] (ranger_base) StdoutLine: {'line': b'Consolidate compiler generated dependencies of target ranger_base_node\n'}
+[0.069245] (ranger_base) StdoutLine: {'line': b'[ 33%] Building CXX object CMakeFiles/ranger_base_node.dir/src/ranger_messenger.cpp.o\n'}
+[0.099654] (-) TimerEvent: {}
+[0.199839] (-) TimerEvent: {}
+[0.300056] (-) TimerEvent: {}
+[0.400280] (-) TimerEvent: {}
+[0.500518] (-) TimerEvent: {}
+[0.600751] (-) TimerEvent: {}
+[0.700970] (-) TimerEvent: {}
+[0.801206] (-) TimerEvent: {}
+[0.901453] (-) TimerEvent: {}
+[1.001712] (-) TimerEvent: {}
+[1.101937] (-) TimerEvent: {}
+[1.202161] (-) TimerEvent: {}
+[1.302394] (-) TimerEvent: {}
+[1.402628] (-) TimerEvent: {}
+[1.502860] (-) TimerEvent: {}
+[1.603080] (-) TimerEvent: {}
+[1.703308] (-) TimerEvent: {}
+[1.803552] (-) TimerEvent: {}
+[1.903752] (-) TimerEvent: {}
+[2.003981] (-) TimerEvent: {}
+[2.104202] (-) TimerEvent: {}
+[2.204439] (-) TimerEvent: {}
+[2.304659] (-) TimerEvent: {}
+[2.404881] (-) TimerEvent: {}
+[2.505048] (-) TimerEvent: {}
+[2.605277] (-) TimerEvent: {}
+[2.705513] (-) TimerEvent: {}
+[2.746226] (ranger_base) StderrLine: {'line': b'In file included from /root/git/ranger_ros2/ranger_base/src/ranger_messenger.cpp:12:\n'}
+[2.746392] (ranger_base) StderrLine: {'line': b'/root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp: In member function \xe2\x80\x98void westonrobot::SpinningModel::operator()(const state_type&, westonrobot::SpinningModel::state_type&, double)\xe2\x80\x99:\n'}
+[2.746446] (ranger_base) StderrLine: {'line': b'/root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp:90:37: warning: unused parameter \xe2\x80\x98x\xe2\x80\x99 [-Wunused-parameter]\n'}
+[2.746493] (ranger_base) StderrLine: {'line': b'   90 |   void operator()(const state_type& x, state_type& xd, double) {\n'}
+[2.746537] (ranger_base) StderrLine: {'line': b'      |                   ~~~~~~~~~~~~~~~~~~^\n'}
+[2.805663] (-) TimerEvent: {}
+[2.905890] (-) TimerEvent: {}
+[3.006089] (-) TimerEvent: {}
+[3.106258] (-) TimerEvent: {}
+[3.206486] (-) TimerEvent: {}
+[3.306714] (-) TimerEvent: {}
+[3.406877] (-) TimerEvent: {}
+[3.507107] (-) TimerEvent: {}
+[3.607344] (-) TimerEvent: {}
+[3.707533] (-) TimerEvent: {}
+[3.807724] (-) TimerEvent: {}
+[3.907910] (-) TimerEvent: {}
+[4.008050] (-) TimerEvent: {}
+[4.108248] (-) TimerEvent: {}
+[4.208447] (-) TimerEvent: {}
+[4.308584] (-) TimerEvent: {}
+[4.408771] (-) TimerEvent: {}
+[4.508921] (-) TimerEvent: {}
+[4.609057] (-) TimerEvent: {}
+[4.709198] (-) TimerEvent: {}
+[4.809396] (-) TimerEvent: {}
+[4.909543] (-) TimerEvent: {}
+[5.009679] (-) TimerEvent: {}
+[5.109815] (-) TimerEvent: {}
+[5.210001] (-) TimerEvent: {}
+[5.310190] (-) TimerEvent: {}
+[5.410382] (-) TimerEvent: {}
+[5.510510] (-) TimerEvent: {}
+[5.610637] (-) TimerEvent: {}
+[5.710811] (-) TimerEvent: {}
+[5.810943] (-) TimerEvent: {}
+[5.911131] (-) TimerEvent: {}
+[6.011318] (-) TimerEvent: {}
+[6.111500] (-) TimerEvent: {}
+[6.211683] (-) TimerEvent: {}
+[6.311870] (-) TimerEvent: {}
+[6.412062] (-) TimerEvent: {}
+[6.512255] (-) TimerEvent: {}
+[6.612477] (-) TimerEvent: {}
+[6.712663] (-) TimerEvent: {}
+[6.812843] (-) TimerEvent: {}
+[6.912978] (-) TimerEvent: {}
+[7.013062] (-) TimerEvent: {}
+[7.113193] (-) TimerEvent: {}
+[7.213330] (-) TimerEvent: {}
+[7.313467] (-) TimerEvent: {}
+[7.413593] (-) TimerEvent: {}
+[7.513719] (-) TimerEvent: {}
+[7.613854] (-) TimerEvent: {}
+[7.713989] (-) TimerEvent: {}
+[7.814117] (-) TimerEvent: {}
+[7.914253] (-) TimerEvent: {}
+[8.014383] (-) TimerEvent: {}
+[8.114528] (-) TimerEvent: {}
+[8.214661] (-) TimerEvent: {}
+[8.314792] (-) TimerEvent: {}
+[8.414968] (-) TimerEvent: {}
+[8.429799] (ranger_base) StdoutLine: {'line': b'[ 66%] Linking CXX executable ranger_base_node\n'}
+[8.515101] (-) TimerEvent: {}
+[8.538838] (ranger_base) StdoutLine: {'line': b'[100%] Built target ranger_base_node\n'}
+[8.548580] (ranger_base) CommandEnded: {'returncode': 0}
+[8.548931] (ranger_base) JobProgress: {'identifier': 'ranger_base', 'progress': 'install'}
+[8.555602] (ranger_base) Command: {'cmd': ['/usr/bin/cmake', '--install', '/root/git/ranger_ros2/build/ranger_base'], 'cwd': '/root/git/ranger_ros2/build/ranger_base', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/root/git/ranger_ros2/install/ranger_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_base'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble')]), 'shell': False}
+[8.560909] (ranger_base) StdoutLine: {'line': b'-- Install configuration: "Release"\n'}
+[8.561030] (ranger_base) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node\n'}
+[8.561798] (ranger_base) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node" to ""\n'}
+[8.561998] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch\n'}
+[8.562027] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v3.launch.py\n'}
+[8.562055] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v1.launch.py\n'}
+[8.562084] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger.launch.py\n'}
+[8.562188] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include\n'}
+[8.562210] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include/ranger_robot_base.launch.xml\n'}
+[8.562233] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v2.launch.py\n'}
+[8.562255] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/package_run_dependencies/ranger_base\n'}
+[8.562276] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/parent_prefix_path/ranger_base\n'}
+[8.562300] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.sh\n'}
+[8.562321] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.dsv\n'}
+[8.562344] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.sh\n'}
+[8.562365] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.dsv\n'}
+[8.562386] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.bash\n'}
+[8.562409] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.sh\n'}
+[8.562429] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.zsh\n'}
+[8.562450] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.dsv\n'}
+[8.562470] (ranger_base) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.dsv\n'}
+[8.562491] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/packages/ranger_base\n'}
+[8.562514] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig.cmake\n'}
+[8.562536] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig-version.cmake\n'}
+[8.562557] (ranger_base) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.xml\n'}
+[8.562950] (ranger_base) CommandEnded: {'returncode': 0}
+[8.572099] (ranger_base) JobEnded: {'identifier': 'ranger_base', 'rc': 0}
+[8.572295] (-) EventReactorShutdown: {}

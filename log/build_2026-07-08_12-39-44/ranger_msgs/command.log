@@ -1,0 +1,6 @@
+Invoking command in '/root/git/ranger_ros2/build/ranger_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/git/ranger_ros2/ranger_msgs -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/tmp/ugv_install -DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_msgs
+Invoked command in '/root/git/ranger_ros2/build/ranger_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/git/ranger_ros2/ranger_msgs -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/tmp/ugv_install -DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_msgs
+Invoking command in '/root/git/ranger_ros2/build/ranger_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_msgs -- -j24 -l24
+Invoked command in '/root/git/ranger_ros2/build/ranger_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_msgs -- -j24 -l24
+Invoking command in '/root/git/ranger_ros2/build/ranger_msgs': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_msgs
+Invoked command in '/root/git/ranger_ros2/build/ranger_msgs' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_msgs

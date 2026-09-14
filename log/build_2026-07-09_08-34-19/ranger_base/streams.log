@@ -1,0 +1,96 @@
+[0.011s] Invoking command in '/root/git/ranger_ros2/build/ranger_base': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /root/git/ranger_ros2/ranger_base -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/tmp/ugv_install -DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_base
+[0.091s] -- The C compiler identification is GNU 11.4.0
+[0.165s] -- The CXX compiler identification is GNU 11.4.0
+[0.174s] -- Detecting C compiler ABI info
+[0.254s] -- Detecting C compiler ABI info - done
+[0.269s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.269s] -- Detecting C compile features
+[0.270s] -- Detecting C compile features - done
+[0.274s] -- Detecting CXX compiler ABI info
+[0.338s] -- Detecting CXX compiler ABI info - done
+[0.343s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.343s] -- Detecting CXX compile features
+[0.343s] -- Detecting CXX compile features - done
+[0.345s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.467s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.530s] -- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)
+[0.562s] -- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.566s] -- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.570s] -- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.576s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.585s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.608s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.609s] -- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.685s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.709s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.740s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.757s] -- Looking for pthread.h
+[0.853s] -- Looking for pthread.h - found
+[0.853s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.958s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.959s] -- Found Threads: TRUE  
+[0.988s] -- Found geometry_msgs: 4.9.1 (/opt/ros/humble/share/geometry_msgs/cmake)
+[0.994s] -- Found nav_msgs: 4.9.1 (/opt/ros/humble/share/nav_msgs/cmake)
+[1.003s] -- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.013s] -- Found tf2: 0.25.20 (/opt/ros/humble/share/tf2/cmake)
+[1.019s] -- Found tf2_ros: 0.25.20 (/opt/ros/humble/share/tf2_ros/cmake)
+[1.064s] -- Found ranger_msgs: 0.0.1 (/root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake)
+[1.072s] -- Found tf2_geometry_msgs: 0.25.20 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)
+[1.081s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[1.082s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[1.082s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[1.084s] -- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.124s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.125s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.125s] -- Configured cppcheck include dirs: /root/git/ranger_ros2/ranger_base/include
+[1.125s] -- Configured cppcheck exclude dirs and/or files: 
+[1.126s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.126s] -- Configured cpplint exclude dirs and/or files: 
+[1.126s] -- Added test 'flake8' to check Python code syntax and style conventions
+[1.126s] -- Added test 'lint_cmake' to check CMake code style
+[1.126s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[1.127s] -- Added test 'uncrustify' to check C / C++ code style
+[1.127s] -- Configured uncrustify additional arguments: 
+[1.127s] -- Added test 'xmllint' to check XML markup files
+[1.127s] -- Configuring done
+[1.133s] -- Generating done
+[1.135s] -- Build files have been written to: /root/git/ranger_ros2/build/ranger_base
+[1.140s] Invoked command in '/root/git/ranger_ros2/build/ranger_base' returned '0': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /root/git/ranger_ros2/ranger_base -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/tmp/ugv_install -DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_base
+[1.140s] Invoking command in '/root/git/ranger_ros2/build/ranger_base': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_base -- -j24 -l24
+[1.175s] [ 33%] Building CXX object CMakeFiles/ranger_base_node.dir/src/ranger_base_node.cpp.o
+[1.175s] [ 66%] Building CXX object CMakeFiles/ranger_base_node.dir/src/ranger_messenger.cpp.o
+[3.952s] In file included from /root/git/ranger_ros2/ranger_base/src/ranger_messenger.cpp:12:
+[3.952s] /root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp: In member function ‘void westonrobot::SpinningModel::operator()(const state_type&, westonrobot::SpinningModel::state_type&, double)’:
+[3.952s] /root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp:90:37: warning: unused parameter ‘x’ [-Wunused-parameter]
+[3.952s]    90 |   void operator()(const state_type& x, state_type& xd, double) {
+[3.952s]       |                   ~~~~~~~~~~~~~~~~~~^
+[9.686s] [100%] Linking CXX executable ranger_base_node
+[9.796s] [100%] Built target ranger_base_node
+[9.806s] Invoked command in '/root/git/ranger_ros2/build/ranger_base' returned '0': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_base -- -j24 -l24
+[9.806s] Invoking command in '/root/git/ranger_ros2/build/ranger_base': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_base
+[9.813s] -- Install configuration: "Release"
+[9.814s] -- Installing: /root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node
+[9.815s] -- Set runtime path of "/root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node" to ""
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v3.launch.py
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v1.launch.py
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger.launch.py
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include/ranger_robot_base.launch.xml
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v2.launch.py
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/package_run_dependencies/ranger_base
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/parent_prefix_path/ranger_base
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.sh
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.dsv
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.sh
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.dsv
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.bash
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.sh
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.zsh
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.dsv
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.dsv
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/packages/ranger_base
+[9.815s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig.cmake
+[9.816s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig-version.cmake
+[9.816s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.xml
+[9.816s] Invoked command in '/root/git/ranger_ros2/build/ranger_base' returned '0': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_base

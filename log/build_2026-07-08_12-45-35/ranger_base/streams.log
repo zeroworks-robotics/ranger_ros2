@@ -1,0 +1,38 @@
+[0.007s] Invoking command in '/root/git/ranger_ros2/build/ranger_base': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_base -- -j24 -l24
+[0.042s] Consolidate compiler generated dependencies of target ranger_base_node
+[0.069s] [ 33%] Building CXX object CMakeFiles/ranger_base_node.dir/src/ranger_messenger.cpp.o
+[2.746s] In file included from /root/git/ranger_ros2/ranger_base/src/ranger_messenger.cpp:12:
+[2.746s] /root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp: In member function ‘void westonrobot::SpinningModel::operator()(const state_type&, westonrobot::SpinningModel::state_type&, double)’:
+[2.746s] /root/git/ranger_ros2/ranger_base/include/ranger_base/kinematics_model.hpp:90:37: warning: unused parameter ‘x’ [-Wunused-parameter]
+[2.746s]    90 |   void operator()(const state_type& x, state_type& xd, double) {
+[2.746s]       |                   ~~~~~~~~~~~~~~~~~~^
+[8.430s] [ 66%] Linking CXX executable ranger_base_node
+[8.539s] [100%] Built target ranger_base_node
+[8.548s] Invoked command in '/root/git/ranger_ros2/build/ranger_base' returned '0': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /root/git/ranger_ros2/build/ranger_base -- -j24 -l24
+[8.555s] Invoking command in '/root/git/ranger_ros2/build/ranger_base': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_base
+[8.561s] -- Install configuration: "Release"
+[8.561s] -- Installing: /root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node
+[8.562s] -- Set runtime path of "/root/git/ranger_ros2/install/ranger_base/lib/ranger_base/ranger_base_node" to ""
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v3.launch.py
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v1.launch.py
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger.launch.py
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/include/ranger_robot_base.launch.xml
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base//launch/ranger_mini_v2.launch.py
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/package_run_dependencies/ranger_base
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/parent_prefix_path/ranger_base
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.sh
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/ament_prefix_path.dsv
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.sh
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/environment/path.dsv
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.bash
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.sh
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.zsh
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/local_setup.dsv
+[8.562s] -- Installing: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.dsv
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ament_index/resource_index/packages/ranger_base
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig.cmake
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/cmake/ranger_baseConfig-version.cmake
+[8.562s] -- Up-to-date: /root/git/ranger_ros2/install/ranger_base/share/ranger_base/package.xml
+[8.563s] Invoked command in '/root/git/ranger_ros2/build/ranger_base' returned '0': AMENT_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble LD_LIBRARY_PATH=/root/git/ranger_ros2/install/ranger_msgs/lib:${LD_LIBRARY_PATH} PYTHONPATH=/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /root/git/ranger_ros2/build/ranger_base

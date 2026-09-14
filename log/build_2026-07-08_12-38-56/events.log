@@ -1,0 +1,498 @@
+[0.000000] (-) TimerEvent: {}
+[0.000180] (-) JobUnselected: {'identifier': 'ranger_bringup'}
+[0.000203] (ranger_msgs) JobQueued: {'identifier': 'ranger_msgs', 'dependencies': OrderedDict()}
+[0.000225] (ranger_base) JobQueued: {'identifier': 'ranger_base', 'dependencies': OrderedDict([('ranger_msgs', '/root/git/ranger_ros2/install/ranger_msgs')])}
+[0.000242] (ranger_msgs) JobStarted: {'identifier': 'ranger_msgs'}
+[0.004179] (ranger_msgs) JobProgress: {'identifier': 'ranger_msgs', 'progress': 'cmake'}
+[0.004513] (ranger_msgs) Command: {'cmd': ['/usr/bin/cmake', '/root/git/ranger_ros2/ranger_msgs', '-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_msgs'], 'cwd': '/root/git/ranger_ros2/build/ranger_msgs', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_msgs'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.095066] (ranger_msgs) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.099714] (-) TimerEvent: {}
+[0.157412] (ranger_msgs) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.162099] (ranger_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.199866] (-) TimerEvent: {}
+[0.235303] (ranger_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.239047] (ranger_msgs) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.239310] (ranger_msgs) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.239625] (ranger_msgs) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.242133] (ranger_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.300072] (-) TimerEvent: {}
+[0.337719] (ranger_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.345532] (ranger_msgs) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.345710] (ranger_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.346014] (ranger_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.348831] (ranger_msgs) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.400167] (-) TimerEvent: {}
+[0.463628] (ranger_msgs) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.500311] (-) TimerEvent: {}
+[0.523300] (ranger_msgs) StdoutLine: {'line': b'-- Found builtin_interfaces: 1.2.2 (/opt/ros/humble/share/builtin_interfaces/cmake)\n'}
+[0.546688] (ranger_msgs) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.549860] (ranger_msgs) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.555622] (ranger_msgs) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.564369] (ranger_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.574218] (ranger_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.583109] (ranger_msgs) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.1 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[0.590959] (ranger_msgs) StdoutLine: {'line': b'-- Found std_msgs: 4.9.1 (/opt/ros/humble/share/std_msgs/cmake)\n'}
+[0.600456] (-) TimerEvent: {}
+[0.700655] (-) TimerEvent: {}
+[0.773305] (ranger_msgs) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[0.800759] (-) TimerEvent: {}
+[0.900935] (-) TimerEvent: {}
+[1.001182] (-) TimerEvent: {}
+[1.042117] (ranger_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.101293] (-) TimerEvent: {}
+[1.135672] (ranger_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.157688] (ranger_msgs) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[1.158872] (ranger_msgs) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[1.179093] (ranger_msgs) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[1.179223] (ranger_msgs) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[1.179272] (ranger_msgs) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[1.179313] (ranger_msgs) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so\n'}
+[1.201451] (-) TimerEvent: {}
+[1.203071] (ranger_msgs) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[1.281959] (ranger_msgs) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.15 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[1.299525] (ranger_msgs) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[1.300417] (ranger_msgs) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[1.300968] (ranger_msgs) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[1.301499] (-) TimerEvent: {}
+[1.302083] (ranger_msgs) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.319891] (ranger_msgs) StdoutLine: {'line': b'-- Generating done\n'}
+[1.325475] (ranger_msgs) StdoutLine: {'line': b'-- Build files have been written to: /root/git/ranger_ros2/build/ranger_msgs\n'}
+[1.329806] (ranger_msgs) CommandEnded: {'returncode': 0}
+[1.330726] (ranger_msgs) JobProgress: {'identifier': 'ranger_msgs', 'progress': 'build'}
+[1.330738] (ranger_msgs) Command: {'cmd': ['/usr/bin/cmake', '--build', '/root/git/ranger_ros2/build/ranger_msgs', '--', '-j24', '-l24'], 'cwd': '/root/git/ranger_ros2/build/ranger_msgs', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_msgs'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.365355] (ranger_msgs) StdoutLine: {'line': b'[  1%] Generating C code for ROS interfaces\n'}
+[1.375517] (ranger_msgs) StdoutLine: {'line': b'[  2%] Generating Rust code for ROS interfaces\n'}
+[1.375608] (ranger_msgs) StdoutLine: {'line': b'[  4%] Generating C++ code for ROS interfaces\n'}
+[1.378350] (ranger_msgs) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_copy_ranger_msgs\n'}
+[1.401631] (-) TimerEvent: {}
+[1.483227] (ranger_msgs) StdoutLine: {'line': b'running egg_info\n'}
+[1.483546] (ranger_msgs) StdoutLine: {'line': b'creating ranger_msgs.egg-info\n'}
+[1.483654] (ranger_msgs) StdoutLine: {'line': b'writing ranger_msgs.egg-info/PKG-INFO\n'}
+[1.483704] (ranger_msgs) StdoutLine: {'line': b'writing dependency_links to ranger_msgs.egg-info/dependency_links.txt\n'}
+[1.483749] (ranger_msgs) StdoutLine: {'line': b'writing top-level names to ranger_msgs.egg-info/top_level.txt\n'}
+[1.483886] (ranger_msgs) StdoutLine: {'line': b"writing manifest file 'ranger_msgs.egg-info/SOURCES.txt'\n"}
+[1.484618] (ranger_msgs) StdoutLine: {'line': b"reading manifest file 'ranger_msgs.egg-info/SOURCES.txt'\n"}
+[1.484829] (ranger_msgs) StdoutLine: {'line': b"writing manifest file 'ranger_msgs.egg-info/SOURCES.txt'\n"}
+[1.497546] (ranger_msgs) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_build_ranger_msgs_egg\n'}
+[1.501761] (-) TimerEvent: {}
+[1.545949] (ranger_msgs) StdoutLine: {'line': b'[  4%] Built target ranger_msgs__rs\n'}
+[1.601856] (-) TimerEvent: {}
+[1.627368] (ranger_msgs) StdoutLine: {'line': b'[  4%] Built target ranger_msgs__cpp\n'}
+[1.635313] (ranger_msgs) StdoutLine: {'line': b'[  6%] Generating C++ type support for eProsima Fast-RTPS\n'}
+[1.635778] (ranger_msgs) StdoutLine: {'line': b'[  6%] Generating C++ introspection for ROS interfaces\n'}
+[1.635906] (ranger_msgs) StdoutLine: {'line': b'[  8%] Generating C++ type support dispatch for ROS interfaces\n'}
+[1.636651] (ranger_msgs) StdoutLine: {'line': b'[  9%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/actuator_state_array__functions.c.o\n'}
+[1.636952] (ranger_msgs) StdoutLine: {'line': b'[ 11%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/driver_state__functions.c.o\n'}
+[1.637140] (ranger_msgs) StdoutLine: {'line': b'[ 12%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/motion_state__functions.c.o\n'}
+[1.637317] (ranger_msgs) StdoutLine: {'line': b'[ 13%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/motor_state__functions.c.o\n'}
+[1.637652] (ranger_msgs) StdoutLine: {'line': b'[ 15%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/system_state__functions.c.o\n'}
+[1.640486] (ranger_msgs) StdoutLine: {'line': b'[ 16%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_c.dir/rosidl_generator_c/ranger_msgs/msg/detail/actuator_state__functions.c.o\n'}
+[1.701956] (-) TimerEvent: {}
+[1.730384] (ranger_msgs) StdoutLine: {'line': b'[ 18%] Linking C shared library libranger_msgs__rosidl_generator_c.so\n'}
+[1.754950] (ranger_msgs) StdoutLine: {'line': b'[ 18%] Built target ranger_msgs__rosidl_generator_c\n'}
+[1.761459] (ranger_msgs) StdoutLine: {'line': b'[ 19%] Generating C introspection for ROS interfaces\n'}
+[1.761824] (ranger_msgs) StdoutLine: {'line': b'[ 22%] Generating C type support dispatch for ROS interfaces\n'}
+[1.761890] (ranger_msgs) StdoutLine: {'line': b'[ 22%] Generating C type support for eProsima Fast-RTPS\n'}
+[1.802037] (-) TimerEvent: {}
+[1.853792] (ranger_msgs) StdoutLine: {'line': b'[ 23%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/actuator_state_array__type_support.cpp.o\n'}
+[1.854160] (ranger_msgs) StdoutLine: {'line': b'[ 25%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/system_state__type_support.cpp.o\n'}
+[1.855226] (ranger_msgs) StdoutLine: {'line': b'[ 26%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/actuator_state__type_support.cpp.o\n'}
+[1.855417] (ranger_msgs) StdoutLine: {'line': b'[ 27%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/driver_state__type_support.cpp.o\n'}
+[1.855560] (ranger_msgs) StdoutLine: {'line': b'[ 29%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/motion_state__type_support.cpp.o\n'}
+[1.855731] (ranger_msgs) StdoutLine: {'line': b'[ 30%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/ranger_msgs/msg/motor_state__type_support.cpp.o\n'}
+[1.874362] (ranger_msgs) StdoutLine: {'line': b'[ 31%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/actuator_state_array__type_support.cpp.o\n'}
+[1.875765] (ranger_msgs) StdoutLine: {'line': b'[ 33%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/motor_state__type_support.cpp.o\n'}
+[1.875943] (ranger_msgs) StdoutLine: {'line': b'[ 34%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/system_state__type_support.cpp.o\n'}
+[1.876053] (ranger_msgs) StdoutLine: {'line': b'[ 36%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/actuator_state__type_support.cpp.o\n'}
+[1.876229] (ranger_msgs) StdoutLine: {'line': b'[ 37%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/motion_state__type_support.cpp.o\n'}
+[1.876268] (ranger_msgs) StdoutLine: {'line': b'[ 38%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/ranger_msgs/msg/detail/driver_state__type_support.cpp.o\n'}
+[1.897909] (ranger_msgs) StdoutLine: {'line': b'[ 40%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/motor_state__type_support.cpp.o\n'}
+[1.898027] (ranger_msgs) StdoutLine: {'line': b'[ 43%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/actuator_state_array__type_support.cpp.o\n'}
+[1.898072] (ranger_msgs) StdoutLine: {'line': b'[ 43%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/actuator_state__type_support.cpp.o\n'}
+[1.898153] (ranger_msgs) StdoutLine: {'line': b'[ 44%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/motion_state__type_support.cpp.o\n'}
+[1.898342] (ranger_msgs) StdoutLine: {'line': b'[ 45%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/driver_state__type_support.cpp.o\n'}
+[1.898481] (ranger_msgs) StdoutLine: {'line': b'[ 47%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/ranger_msgs/msg/detail/dds_fastrtps/system_state__type_support.cpp.o\n'}
+[1.902123] (-) TimerEvent: {}
+[1.948384] (ranger_msgs) StdoutLine: {'line': b'[ 52%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/motion_state__type_support.cpp.o\n'}
+[1.948531] (ranger_msgs) StdoutLine: {'line': b'[ 52%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/actuator_state__type_support.cpp.o\n'}
+[1.948577] (ranger_msgs) StdoutLine: {'line': b'[ 52%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/actuator_state_array__type_support.cpp.o\n'}
+[1.948618] (ranger_msgs) StdoutLine: {'line': b'[ 52%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/driver_state__type_support.cpp.o\n'}
+[1.970490] (ranger_msgs) StdoutLine: {'line': b'[ 55%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/system_state__type_support.cpp.o\n'}
+[1.970609] (ranger_msgs) StdoutLine: {'line': b'[ 55%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/ranger_msgs/msg/motor_state__type_support.cpp.o\n'}
+[1.993486] (ranger_msgs) StdoutLine: {'line': b'[ 56%] Linking CXX shared library libranger_msgs__rosidl_typesupport_c.so\n'}
+[2.002212] (-) TimerEvent: {}
+[2.016534] (ranger_msgs) StdoutLine: {'line': b'[ 56%] Built target ranger_msgs__rosidl_typesupport_c\n'}
+[2.049165] (ranger_msgs) StdoutLine: {'line': b'[ 59%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/driver_state__type_support.c.o\n'}
+[2.049289] (ranger_msgs) StdoutLine: {'line': b'[ 61%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/actuator_state__type_support.c.o\n'}
+[2.049322] (ranger_msgs) StdoutLine: {'line': b'[ 61%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/actuator_state_array__type_support.c.o\n'}
+[2.053481] (ranger_msgs) StdoutLine: {'line': b'[ 62%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/system_state__type_support.c.o\n'}
+[2.053614] (ranger_msgs) StdoutLine: {'line': b'[ 63%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/motor_state__type_support.c.o\n'}
+[2.053653] (ranger_msgs) StdoutLine: {'line': b'[ 65%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/ranger_msgs/msg/detail/motion_state__type_support.c.o\n'}
+[2.059676] (ranger_msgs) StdoutLine: {'line': b'[ 68%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/actuator_state_array__type_support_c.cpp.o\n'}
+[2.059797] (ranger_msgs) StdoutLine: {'line': b'[ 68%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/driver_state__type_support_c.cpp.o\n'}
+[2.064826] (ranger_msgs) StdoutLine: {'line': b'[ 69%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/actuator_state__type_support_c.cpp.o\n'}
+[2.077817] (ranger_msgs) StdoutLine: {'line': b'[ 70%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/motion_state__type_support_c.cpp.o\n'}
+[2.080783] (ranger_msgs) StdoutLine: {'line': b'[ 73%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/system_state__type_support_c.cpp.o\n'}
+[2.080942] (ranger_msgs) StdoutLine: {'line': b'[ 73%] Building CXX object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/ranger_msgs/msg/detail/motor_state__type_support_c.cpp.o\n'}
+[2.083322] (ranger_msgs) StdoutLine: {'line': b'[ 75%] Linking C shared library libranger_msgs__rosidl_typesupport_introspection_c.so\n'}
+[2.102396] (ranger_msgs) StdoutLine: {'line': b'[ 76%] Linking CXX shared library libranger_msgs__rosidl_typesupport_cpp.so\n'}
+[2.102532] (-) TimerEvent: {}
+[2.107939] (ranger_msgs) StdoutLine: {'line': b'[ 76%] Built target ranger_msgs__rosidl_typesupport_introspection_c\n'}
+[2.134246] (ranger_msgs) StdoutLine: {'line': b'[ 76%] Built target ranger_msgs__rosidl_typesupport_cpp\n'}
+[2.202722] (-) TimerEvent: {}
+[2.207535] (ranger_msgs) StdoutLine: {'line': b'[ 77%] Linking CXX shared library libranger_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[2.207866] (ranger_msgs) StdoutLine: {'line': b'[ 79%] Linking CXX shared library libranger_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[2.249514] (ranger_msgs) StdoutLine: {'line': b'[ 79%] Built target ranger_msgs__rosidl_typesupport_fastrtps_cpp\n'}
+[2.252932] (ranger_msgs) StdoutLine: {'line': b'[ 79%] Built target ranger_msgs__rosidl_typesupport_introspection_cpp\n'}
+[2.302841] (-) TimerEvent: {}
+[2.305567] (ranger_msgs) StdoutLine: {'line': b'[ 80%] Linking CXX shared library libranger_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[2.350061] (ranger_msgs) StdoutLine: {'line': b'[ 80%] Built target ranger_msgs__rosidl_typesupport_fastrtps_c\n'}
+[2.368286] (ranger_msgs) StdoutLine: {'line': b'[ 80%] Built target ranger_msgs\n'}
+[2.388803] (ranger_msgs) StdoutLine: {'line': b'[ 81%] Generating Python code for ROS interfaces\n'}
+[2.402893] (-) TimerEvent: {}
+[2.503031] (-) TimerEvent: {}
+[2.603136] (-) TimerEvent: {}
+[2.703246] (-) TimerEvent: {}
+[2.759046] (ranger_msgs) StdoutLine: {'line': b'[ 81%] Built target ranger_msgs__py\n'}
+[2.770537] (ranger_msgs) StdoutLine: {'line': b'[ 84%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_system_state_s.c.o\n'}
+[2.770623] (ranger_msgs) StdoutLine: {'line': b'[ 84%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_motor_state_s.c.o\n'}
+[2.771052] (ranger_msgs) StdoutLine: {'line': b'[ 87%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_motion_state_s.c.o\n'}
+[2.771101] (ranger_msgs) StdoutLine: {'line': b'[ 87%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_actuator_state_array_s.c.o\n'}
+[2.771992] (ranger_msgs) StdoutLine: {'line': b'[ 88%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_actuator_state_s.c.o\n'}
+[2.772041] (ranger_msgs) StdoutLine: {'line': b'[ 90%] Building C object CMakeFiles/ranger_msgs__rosidl_generator_py.dir/rosidl_generator_py/ranger_msgs/msg/_driver_state_s.c.o\n'}
+[2.803334] (-) TimerEvent: {}
+[2.845546] (ranger_msgs) StdoutLine: {'line': b'[ 91%] Linking C shared library rosidl_generator_py/ranger_msgs/libranger_msgs__rosidl_generator_py.so\n'}
+[2.878537] (ranger_msgs) StdoutLine: {'line': b'[ 91%] Built target ranger_msgs__rosidl_generator_py\n'}
+[2.895131] (ranger_msgs) StdoutLine: {'line': b'[ 93%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_c.c.o\n'}
+[2.895342] (ranger_msgs) StdoutLine: {'line': b'[ 94%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o\n'}
+[2.896581] (ranger_msgs) StdoutLine: {'line': b'[ 95%] Building C object CMakeFiles/ranger_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_introspection_c.c.o\n'}
+[2.903403] (-) TimerEvent: {}
+[2.979956] (ranger_msgs) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/ranger_msgs/ranger_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[2.980048] (ranger_msgs) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/ranger_msgs/ranger_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[2.980073] (ranger_msgs) StdoutLine: {'line': b'[100%] Linking C shared library rosidl_generator_py/ranger_msgs/ranger_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.001572] (ranger_msgs) StdoutLine: {'line': b'[100%] Built target ranger_msgs__rosidl_typesupport_c__pyext\n'}
+[3.001658] (ranger_msgs) StdoutLine: {'line': b'[100%] Built target ranger_msgs__rosidl_typesupport_fastrtps_c__pyext\n'}
+[3.003428] (-) TimerEvent: {}
+[3.006445] (ranger_msgs) StdoutLine: {'line': b'[100%] Built target ranger_msgs__rosidl_typesupport_introspection_c__pyext\n'}
+[3.012615] (ranger_msgs) CommandEnded: {'returncode': 0}
+[3.013021] (ranger_msgs) JobProgress: {'identifier': 'ranger_msgs', 'progress': 'install'}
+[3.020627] (ranger_msgs) Command: {'cmd': ['/usr/bin/cmake', '--install', '/root/git/ranger_ros2/build/ranger_msgs'], 'cwd': '/root/git/ranger_ros2/build/ranger_msgs', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_msgs'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[3.028699] (ranger_msgs) StdoutLine: {'line': b'-- Install configuration: "Release"\n'}
+[3.028937] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ament_index/resource_index/rosidl_interfaces/ranger_msgs\n'}
+[3.029170] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.029302] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.029419] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/system_state.h\n'}
+[3.029593] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/actuator_state_array.h\n'}
+[3.029869] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/rosidl_generator_c__visibility_control.h\n'}
+[3.029921] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.029960] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__functions.c\n'}
+[3.029997] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__struct.h\n'}
+[3.030034] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__functions.c\n'}
+[3.030144] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__struct.h\n'}
+[3.030184] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__functions.h\n'}
+[3.030221] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__struct.h\n'}
+[3.030255] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__functions.c\n'}
+[3.030290] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__functions.c\n'}
+[3.030385] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__functions.h\n'}
+[3.030419] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__struct.h\n'}
+[3.030523] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__struct.h\n'}
+[3.030556] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__type_support.h\n'}
+[3.030586] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__functions.h\n'}
+[3.030618] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__type_support.h\n'}
+[3.030711] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__type_support.h\n'}
+[3.030743] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__functions.h\n'}
+[3.030774] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__functions.h\n'}
+[3.030805] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__struct.h\n'}
+[3.030836] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__functions.c\n'}
+[3.030867] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__type_support.h\n'}
+[3.030943] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__type_support.h\n'}
+[3.030979] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__functions.c\n'}
+[3.031013] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__functions.h\n'}
+[3.031046] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__type_support.h\n'}
+[3.031077] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/driver_state.h\n'}
+[3.031152] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/actuator_state.h\n'}
+[3.031216] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/motion_state.h\n'}
+[3.031276] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/motor_state.h\n'}
+[3.031307] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/library_path.sh\n'}
+[3.031337] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/library_path.dsv\n'}
+[3.031402] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_generator_c.so\n'}
+[3.031563] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_generator_c.so" to ""\n'}
+[3.031643] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.031724] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.031757] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[3.031789] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.031821] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__rosidl_typesupport_fastrtps_c.h\n'}
+[3.031911] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.031945] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.031976] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.032007] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.032072] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__rosidl_typesupport_fastrtps_c.h\n'}
+[3.032102] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[3.032186] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[3.032255] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.032289] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.032320] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/system_state.hpp\n'}
+[3.032388] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/motor_state.hpp\n'}
+[3.032455] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/actuator_state.hpp\n'}
+[3.032486] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/motion_state.hpp\n'}
+[3.032515] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/actuator_state_array.hpp\n'}
+[3.032598] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[3.032655] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.032685] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__struct.hpp\n'}
+[3.032715] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__type_support.hpp\n'}
+[3.032745] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__traits.hpp\n'}
+[3.032805] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__builder.hpp\n'}
+[3.032835] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__traits.hpp\n'}
+[3.032893] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__traits.hpp\n'}
+[3.032924] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__builder.hpp\n'}
+[3.032953] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__struct.hpp\n'}
+[3.033014] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__builder.hpp\n'}
+[3.033046] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__struct.hpp\n'}
+[3.033075] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__struct.hpp\n'}
+[3.033152] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__traits.hpp\n'}
+[3.033184] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__type_support.hpp\n'}
+[3.033213] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__type_support.hpp\n'}
+[3.033281] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__traits.hpp\n'}
+[3.033333] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__type_support.hpp\n'}
+[3.033363] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__struct.hpp\n'}
+[3.033390] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__struct.hpp\n'}
+[3.033466] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__type_support.hpp\n'}
+[3.033497] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__builder.hpp\n'}
+[3.033525] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__builder.hpp\n'}
+[3.033598] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__type_support.hpp\n'}
+[3.033627] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__traits.hpp\n'}
+[3.033654] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__builder.hpp\n'}
+[3.033728] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/driver_state.hpp\n'}
+[3.033759] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.033787] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.033815] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[3.033877] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.033903] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/dds_fastrtps\n'}
+[3.033929] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.033955] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.034027] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.034053] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.034077] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.034126] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[3.034150] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[3.034216] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[3.034271] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.034299] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.034324] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[3.034379] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.034410] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__rosidl_typesupport_introspection_c.h\n'}
+[3.034437] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__type_support.c\n'}
+[3.034501] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__type_support.c\n'}
+[3.034528] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__type_support.c\n'}
+[3.034552] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__rosidl_typesupport_introspection_c.h\n'}
+[3.034617] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__type_support.c\n'}
+[3.034643] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__rosidl_typesupport_introspection_c.h\n'}
+[3.034668] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__rosidl_typesupport_introspection_c.h\n'}
+[3.034735] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__rosidl_typesupport_introspection_c.h\n'}
+[3.034759] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__rosidl_typesupport_introspection_c.h\n'}
+[3.034783] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__type_support.c\n'}
+[3.034834] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__type_support.c\n'}
+[3.034858] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_introspection_c.so\n'}
+[3.034950] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_introspection_c.so" to ""\n'}
+[3.034997] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_c.so\n'}
+[3.035077] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_c.so" to ""\n'}
+[3.035142] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs\n'}
+[3.035167] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg\n'}
+[3.035227] (ranger_msgs) StdoutLine: {'line': b'-- Up-to-date: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail\n'}
+[3.035253] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035275] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035298] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__type_support.cpp\n'}
+[3.035346] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__type_support.cpp\n'}
+[3.035390] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035412] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motor_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035439] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/driver_state__type_support.cpp\n'}
+[3.035484] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035507] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/actuator_state_array__type_support.cpp\n'}
+[3.035560] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__rosidl_typesupport_introspection_cpp.hpp\n'}
+[3.035610] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/motion_state__type_support.cpp\n'}
+[3.035800] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/include/ranger_msgs/ranger_msgs/msg/detail/system_state__type_support.cpp\n'}
+[3.035825] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[3.035847] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[3.035870] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_cpp.so\n'}
+[3.035934] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_typesupport_cpp.so" to ""\n'}
+[3.035958] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/pythonpath.sh\n'}
+[3.035980] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/pythonpath.dsv\n'}
+[3.036029] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs-0.0.1-py3.10.egg-info\n'}
+[3.036052] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs-0.0.1-py3.10.egg-info/dependency_links.txt\n'}
+[3.036109] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs-0.0.1-py3.10.egg-info/PKG-INFO\n'}
+[3.036130] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs-0.0.1-py3.10.egg-info/top_level.txt\n'}
+[3.036150] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs-0.0.1-py3.10.egg-info/SOURCES.txt\n'}
+[3.036193] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs\n'}
+[3.036230] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/libranger_msgs__rosidl_generator_py.so\n'}
+[3.036252] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_c.c\n'}
+[3.036296] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.036317] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg\n'}
+[3.036369] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motor_state.py\n'}
+[3.036407] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state.py\n'}
+[3.036452] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_driver_state.py\n'}
+[3.036474] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_system_state.py\n'}
+[3.036515] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state_array_s.c\n'}
+[3.036567] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motor_state_s.c\n'}
+[3.036587] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state_s.c\n'}
+[3.036610] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_system_state_s.c\n'}
+[3.036662] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motion_state_s.c\n'}
+[3.036700] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state_array.py\n'}
+[3.036719] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motion_state.py\n'}
+[3.036738] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_driver_state_s.c\n'}
+[3.036790] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/__init__.py\n'}
+[3.036809] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[3.036828] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/_ranger_msgs_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[3.036869] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.036890] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/__init__.py\n'}
+[3.036927] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.062397] (ranger_msgs) StdoutLine: {'line': b"Listing '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs'...\n"}
+[3.062461] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/__init__.py'...\n"}
+[3.062482] (ranger_msgs) StdoutLine: {'line': b"Listing '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg'...\n"}
+[3.062502] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/__init__.py'...\n"}
+[3.062520] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state.py'...\n"}
+[3.062539] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_actuator_state_array.py'...\n"}
+[3.062557] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_driver_state.py'...\n"}
+[3.062575] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motion_state.py'...\n"}
+[3.062596] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_motor_state.py'...\n"}
+[3.062613] (ranger_msgs) StdoutLine: {'line': b"Compiling '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/msg/_system_state.py'...\n"}
+[3.064582] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.064707] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[3.064776] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.064874] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_introspection_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[3.064933] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so\n'}
+[3.065027] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages/ranger_msgs/ranger_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" to ""\n'}
+[3.065065] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_generator_py.so\n'}
+[3.065149] (ranger_msgs) StdoutLine: {'line': b'-- Set runtime path of "/root/git/ranger_ros2/install/ranger_msgs/lib/libranger_msgs__rosidl_generator_py.so" to ""\n'}
+[3.065187] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ament_index/resource_index/rust_packages/ranger_msgs\n'}
+[3.065224] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust\n'}
+[3.065275] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/build.rs\n'}
+[3.065295] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/Cargo.toml\n'}
+[3.065347] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/src\n'}
+[3.065367] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/src/msg.rs\n'}
+[3.065386] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/src/msg\n'}
+[3.065430] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/src/msg/rmw.rs\n'}
+[3.065451] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/rust/src/lib.rs\n'}
+[3.065490] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/ActuatorState.idl\n'}
+[3.065509] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/ActuatorStateArray.idl\n'}
+[3.065558] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/DriverState.idl\n'}
+[3.065593] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/MotionState.idl\n'}
+[3.065612] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/MotorState.idl\n'}
+[3.065647] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/SystemState.idl\n'}
+[3.065695] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/ActuatorState.msg\n'}
+[3.065715] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/ActuatorStateArray.msg\n'}
+[3.065763] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/DriverState.msg\n'}
+[3.065782] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/MotionState.msg\n'}
+[3.065829] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/MotorState.msg\n'}
+[3.065849] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/msg/SystemState.msg\n'}
+[3.065886] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ament_index/resource_index/package_run_dependencies/ranger_msgs\n'}
+[3.065923] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ament_index/resource_index/parent_prefix_path/ranger_msgs\n'}
+[3.065960] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/ament_prefix_path.sh\n'}
+[3.066001] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/ament_prefix_path.dsv\n'}
+[3.066037] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/path.sh\n'}
+[3.066073] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/environment/path.dsv\n'}
+[3.066107] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/local_setup.bash\n'}
+[3.066141] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/local_setup.sh\n'}
+[3.066177] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/local_setup.zsh\n'}
+[3.066213] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/local_setup.dsv\n'}
+[3.066248] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/package.dsv\n'}
+[3.066290] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ament_index/resource_index/packages/ranger_msgs\n'}
+[3.066340] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_generator_cExport.cmake\n'}
+[3.066385] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_generator_cExport-release.cmake\n'}
+[3.066432] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[3.066474] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_typesupport_fastrtps_cExport-release.cmake\n'}
+[3.066515] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_generator_cppExport.cmake\n'}
+[3.066556] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[3.066594] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_typesupport_fastrtps_cppExport-release.cmake\n'}
+[3.066636] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_introspection_cExport.cmake\n'}
+[3.066675] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_introspection_cExport-release.cmake\n'}
+[3.066715] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_cExport.cmake\n'}
+[3.066753] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_cExport-release.cmake\n'}
+[3.066794] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[3.066832] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_introspection_cppExport-release.cmake\n'}
+[3.066872] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_cppExport.cmake\n'}
+[3.066908] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgs__rosidl_typesupport_cppExport-release.cmake\n'}
+[3.066950] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_generator_pyExport.cmake\n'}
+[3.066987] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/export_ranger_msgs__rosidl_generator_pyExport-release.cmake\n'}
+[3.067025] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/rosidl_cmake-extras.cmake\n'}
+[3.067062] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[3.067099] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[3.067134] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[3.067170] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[3.067205] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[3.067241] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[3.067276] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgsConfig.cmake\n'}
+[3.067312] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake/ranger_msgsConfig-version.cmake\n'}
+[3.067348] (ranger_msgs) StdoutLine: {'line': b'-- Installing: /root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/package.xml\n'}
+[3.068348] (ranger_msgs) CommandEnded: {'returncode': 0}
+[3.078319] (ranger_msgs) JobEnded: {'identifier': 'ranger_msgs', 'rc': 0}
+[3.078590] (ranger_base) JobStarted: {'identifier': 'ranger_base'}
+[3.082353] (ranger_base) JobProgress: {'identifier': 'ranger_base', 'progress': 'cmake'}
+[3.082684] (ranger_base) Command: {'cmd': ['/usr/bin/cmake', '/root/git/ranger_ros2/ranger_base', '-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_INSTALL_PREFIX=/root/git/ranger_ros2/install/ranger_base'], 'cwd': '/root/git/ranger_ros2/build/ranger_base', 'env': OrderedDict([('HOSTNAME', 'cona-MS-7D96'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/root/git/ranger_ros2/install/ranger_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/'), ('ROS_PYTHON_VERSION', '3'), ('ROS_DISTRO', 'humble'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('FLIR_GENTL64_CTI', '/opt/spinnaker/lib/flir-gentl/FLIR_GenTL.cti'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/opt/spinnaker/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('DISPLAY', ':1'), ('LANG', 'C.UTF-8'), ('AMENT_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('PWD', '/root/git/ranger_ros2/build/ranger_base'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/root/git/ranger_ros2/install/ranger_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'Asia/Seoul'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/root/git/ranger_ros2/install/ranger_msgs:/opt/ros/humble')]), 'shell': False}
+[3.103546] (-) TimerEvent: {}
+[3.129495] (ranger_base) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[3.160492] (ranger_base) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[3.164023] (ranger_base) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[3.203647] (-) TimerEvent: {}
+[3.216989] (ranger_base) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[3.234613] (ranger_base) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[3.235259] (ranger_base) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[3.235920] (ranger_base) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[3.240166] (ranger_base) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[3.303880] (-) TimerEvent: {}
+[3.338031] (ranger_base) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[3.341562] (ranger_base) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[3.341782] (ranger_base) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[3.341995] (ranger_base) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[3.343687] (ranger_base) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[3.404013] (-) TimerEvent: {}
+[3.490048] (ranger_base) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[3.504186] (-) TimerEvent: {}
+[3.557643] (ranger_base) StdoutLine: {'line': b'-- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[3.581000] (ranger_base) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[3.583674] (ranger_base) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[3.588004] (ranger_base) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[3.594024] (ranger_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[3.602125] (ranger_base) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.604322] (-) TimerEvent: {}
+[3.628807] (ranger_base) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[3.630777] (ranger_base) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.704428] (-) TimerEvent: {}
+[3.709074] (ranger_base) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[3.736333] (ranger_base) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[3.762997] (ranger_base) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[3.768874] (ranger_base) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[3.804535] (-) TimerEvent: {}
+[3.821792] (ranger_base) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[3.821998] (ranger_base) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[3.904311] (ranger_base) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[3.904693] (-) TimerEvent: {}
+[3.906267] (ranger_base) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[3.954450] (ranger_base) StdoutLine: {'line': b'-- Found geometry_msgs: 4.9.1 (/opt/ros/humble/share/geometry_msgs/cmake)\n'}
+[3.962479] (ranger_base) StdoutLine: {'line': b'-- Found nav_msgs: 4.9.1 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[3.972565] (ranger_base) StdoutLine: {'line': b'-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[3.983368] (ranger_base) StdoutLine: {'line': b'-- Found tf2: 0.25.20 (/opt/ros/humble/share/tf2/cmake)\n'}
+[3.990953] (ranger_base) StdoutLine: {'line': b'-- Found tf2_ros: 0.25.20 (/opt/ros/humble/share/tf2_ros/cmake)\n'}
+[4.004804] (-) TimerEvent: {}
+[4.047337] (ranger_base) StdoutLine: {'line': b'-- Found ranger_msgs: 0.0.1 (/root/git/ranger_ros2/install/ranger_msgs/share/ranger_msgs/cmake)\n'}
+[4.062018] (ranger_base) StderrLine: {'line': b'CMake Error at CMakeLists.txt:27 (find_package):\n'}
+[4.062099] (ranger_base) StderrLine: {'line': b'  By not providing "Findugv_sdk.cmake" in CMAKE_MODULE_PATH this project has\n'}
+[4.062126] (ranger_base) StderrLine: {'line': b'  asked CMake to find a package configuration file provided by "ugv_sdk", but\n'}
+[4.062153] (ranger_base) StderrLine: {'line': b'  CMake did not find one.\n'}
+[4.062173] (ranger_base) StderrLine: {'line': b'\n'}
+[4.062191] (ranger_base) StderrLine: {'line': b'  Could not find a package configuration file provided by "ugv_sdk" with any\n'}
+[4.062209] (ranger_base) StderrLine: {'line': b'  of the following names:\n'}
+[4.062226] (ranger_base) StderrLine: {'line': b'\n'}
+[4.062247] (ranger_base) StderrLine: {'line': b'    ugv_sdkConfig.cmake\n'}
+[4.062266] (ranger_base) StderrLine: {'line': b'    ugv_sdk-config.cmake\n'}
+[4.062283] (ranger_base) StderrLine: {'line': b'\n'}
+[4.062306] (ranger_base) StderrLine: {'line': b'  Add the installation prefix of "ugv_sdk" to CMAKE_PREFIX_PATH or set\n'}
+[4.062325] (ranger_base) StderrLine: {'line': b'  "ugv_sdk_DIR" to a directory containing one of the above files.  If\n'}
+[4.062344] (ranger_base) StderrLine: {'line': b'  "ugv_sdk" provides a separate development package or SDK, be sure it has\n'}
+[4.062362] (ranger_base) StderrLine: {'line': b'  been installed.\n'}
+[4.062380] (ranger_base) StderrLine: {'line': b'\n'}
+[4.062398] (ranger_base) StderrLine: {'line': b'\n'}
+[4.062505] (ranger_base) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[4.062557] (ranger_base) StdoutLine: {'line': b'See also "/root/git/ranger_ros2/build/ranger_base/CMakeFiles/CMakeOutput.log".\n'}
+[4.066268] (ranger_base) CommandEnded: {'returncode': 1}
+[4.077595] (ranger_base) JobEnded: {'identifier': 'ranger_base', 'rc': 1}
+[4.087961] (-) EventReactorShutdown: {}
