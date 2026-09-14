@@ -282,8 +282,43 @@ for line in sys.stdin:
   stop
   info "조향이 멈춘 x 구간과, 그때 error_full/mode 가 무엇이었는지 보세요."
   ;;
+1f)
+  hdr "1f. 진단 — 조향 정착 시간 (목표별)"
+  info "이동 거리에 따라 시간이 정비례하는지(고정 기울기) 아닌지(가감속) 가릅니다."
+  info "목표 4개 x 12초 = 약 1분. y = 목표각 / 1.570 으로 명령합니다."
+  check_cmd_vel_owner
+  ask "공간 확보됐습니까? (조향만 움직이도록 x=0 으로 줍니다)"
+  printf "  %-12s %-10s %-10s %-10s %s\n" "목표(rad)" "출발까지" "이동시간" "정착값" "평균기울기"
+  for t in 0.2 0.5 1.0 1.57; do
+    y=$(awk -v a="$t" 'BEGIN{printf "%.4f", a/1.570}')
+    stop; sleep 2
+    ( timeout 13 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: $y}}" >/dev/null 2>&1 ) &
+    pid=$!
+    timeout 12 ros2 topic echo /actuator_state 2>/dev/null \
+      | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
+      | python3 -u -c "
+import sys, time
+tgt=float('$t'); t0=time.time(); n=0
+t_move=None; t_reach=None; last=0.0
+for line in sys.stdin:
+    n+=1
+    if n%8!=5: continue
+    v=float(line); t=time.time()-t0; last=v
+    if t_move is None and abs(v)>0.02: t_move=t
+    if t_reach is None and abs(v-tgt)<=tgt*0.05: t_reach=t; break
+def f(x): return '%.2fs'%x if x is not None else '  -  '
+travel = (t_reach-t_move) if (t_move is not None and t_reach is not None) else None
+slope  = (tgt/travel) if travel and travel>0 else None
+print('  %-12s %-10s %-10s %-10s %s' % ('$t', f(t_move), f(travel) if travel else '  -  ',
+      '%.3f'%last, ('%.2f rad/s'%slope) if slope else '-'))
+"
+    wait $pid 2>/dev/null
+  done
+  stop
+  info "이동시간이 목표에 정비례하면 고정 기울기, 짧은 목표에서 기울기가 낮으면 가감속 구간이 있는 것."
+  ;;
 *)
-  echo "사용법: $0 <0-7|1d|1e> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적 / 1e 속도별조향 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
+  echo "사용법: $0 <0-7|1d|1e|1f> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적 / 1e 속도별조향 / 1f 정착시간 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
 esac
 echo; echo "  합계: PASS $PASS / FAIL $FAIL"
 [ "$FAIL" -eq 0 ] || exit 1
