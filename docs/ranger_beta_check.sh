@@ -284,50 +284,61 @@ for line in sys.stdin:
   ;;
 1f)
   hdr "1f. 진단 — 조향 정착 시간 (목표별)"
-  info "이동 거리에 따라 시간이 정비례하는지(고정 기울기) 아닌지(가감속) 가릅니다."
-  info "목표 4개 x 12초. y = 목표각 / 1.570 으로 명령하고, x=0 이라 바퀴만 돕니다."
+  info "매 목표마다 0 으로 복귀시킨 뒤 재므로, 이동 거리 = 목표각 입니다."
+  info "목표 4개, 각 20초 남짓. x=0 이라 바퀴만 돕니다."
   check_cmd_vel_owner
   ask "공간 확보됐습니까?"
+  trace=$(mktemp); recenter_fail=0
   for tgt in 0.2 0.5 1.0 1.57; do
     y=$(awk -v a="$tgt" 'BEGIN{printf "%.4f", a/1.570}')
-    stop; sleep 2
     echo "  --- 목표 $tgt rad  (cmd: x=0.0 y=$y)"
-    ( timeout 14 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: $y}}" >/dev/null 2>&1 ) &
-    pid=$!
-    timeout 12 ros2 topic echo /actuator_state 2>/dev/null \
-      | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
-      | python3 -u -c "
+
+    # ① 0 으로 복귀시키고 실제로 돌아왔는지 확인한다. 직전 각도에서 출발하면
+    #    이동 거리가 목표각이 아니라 "직전 값과의 차이"가 되어 기울기가 틀린다.
+    ( timeout 6 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: 0.0}}" >/dev/null 2>&1 ) &
+    sleep 6; wait 2>/dev/null
+    home=$(steer_trace 3 0 0.03 | awk '{print $1}')
+    if awk -v v="$home" 'BEGIN{exit !(v<-0.05 || v>0.05)}'; then
+      info "복귀 실패 (현재 $home rad) — 이 구간 결과는 신뢰하지 마세요"; recenter_fail=1
+    fi
+
+    # ② 스트림을 먼저 띄워 예열한 뒤 명령을 준다. 그래야 "명령 → 움직임" 지연을
+    #    스트림 기동 시간과 섞지 않는다. 절대시각으로 기록하고 나중에 맞춘다.
+    : > "$trace"
+    ( timeout 14 ros2 topic echo /actuator_state 2>/dev/null \
+        | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
+        | python3 -u -c "
 import sys, time
-tgt=float('$tgt'); t0=time.time()
-n=0; samples=0; t_move=None; t_reach=None; last=None; mx=0.0; shown=0
+n=0
 for line in sys.stdin:
     n+=1
-    if n%8!=5: continue
-    samples+=1
-    v=float(line); t=time.time()-t0; last=v
-    if abs(v)>mx: mx=abs(v)
-    if t_move is None and abs(v)>0.02: t_move=t
-    if shown<8 and (t_move is None or shown==0 or abs(v)>0.02):
-        print('      t=%5.2fs  조향=%+.3f' % (t, v)); shown+=1
-    if t_reach is None and abs(v-tgt)<=max(0.02, tgt*0.05):
-        t_reach=t
-        print('      t=%5.2fs  조향=%+.3f  ← 도달' % (t, v))
-        break
-if samples==0:
-    print('      !! 피드백 샘플 0개 — /actuator_state 를 읽지 못했습니다 (측정 실패)')
-elif t_move is None:
-    print('      !! 조향이 움직이지 않음 — 샘플 %d개, 최대 %.3f rad' % (samples, mx))
-elif t_reach is None:
-    print('      !! 미도달 — 샘플 %d개, 출발 %.2fs, 최대 %.3f, 최종 %.3f' % (samples, t_move, mx, last))
-else:
-    travel=t_reach-t_move
-    print('      => 출발 %.2fs · 이동 %.2fs · 평균 %.2f rad/s · 샘플 %d개'
-          % (t_move, travel, tgt/travel if travel>0 else 0, samples))
-"
-    wait $pid 2>/dev/null
+    if n%8==5: sys.stdout.write('%.3f %s' % (time.time(), line))
+" > "$trace" ) &
+    spid=$!
+    sleep 3
+    t_cmd=$(date +%s.%N)
+    ( timeout 10 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0, y: $y}}" >/dev/null 2>&1 ) &
+    wait 2>/dev/null; kill $spid 2>/dev/null
+
+    awk -v tgt="$tgt" -v t0="$t_cmd" -v home="$home" '
+      $1 >= t0 {
+        n++; v=$2+0; t=$1-t0
+        if (tmove=="" && (v-home > 0.02 || home-v > 0.02)) tmove=t
+        d=v-tgt; if (d<0) d=-d
+        if (treach=="" && d<=0.03) { treach=t }
+        last=v; if (v>mx) mx=v
+      }
+      END {
+        if (n<5) { print "      !! 샘플 " n+0 "개 — 측정 실패"; exit }
+        if (tmove=="")  { printf "      !! 조향이 움직이지 않음 (샘플 %d, 최대 %.3f)\n", n, mx; exit }
+        if (treach=="") { printf "      !! 미도달 (출발 %.2fs, 최대 %.3f, 최종 %.3f, 샘플 %d)\n", tmove, mx, last, n; exit }
+        printf "      => 명령→출발 %.2fs · 이동 %.2fs · 평균 %.2f rad/s · 샘플 %d\n", \
+               tmove, treach-tmove, (treach>tmove ? tgt/(treach-tmove) : 0), n
+      }' "$trace"
   done
-  stop
-  info "이동시간이 목표각에 정비례하면 고정 기울기, 짧은 목표에서 기울기가 낮으면 가감속 구간."
+  stop; rm -f "$trace"
+  [ "$recenter_fail" = "1" ] && info "복귀 실패 구간이 있었습니다 — 그 줄은 이동 거리가 목표각과 다릅니다."
+  info "이동시간이 목표각에 정비례하면 고정 기울기, 짧은 목표에서 기울기가 낮으면 가감속."
   ;;
 *)
   echo "사용법: $0 <0-7|1d|1e|1f> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적 / 1e 속도별조향 / 1f 정착시간 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
