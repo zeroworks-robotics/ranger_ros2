@@ -9,6 +9,8 @@
 
 #include "ranger_base/ranger_messenger.hpp"
 
+#include <algorithm>
+
 #include "ranger_base/kinematics_model.hpp"
 
 using namespace rclcpp;
@@ -130,6 +132,19 @@ void RangerROSMessenger::LoadParameters() {
                                                          CONTROL_MODE_CAN));
   control_mode_period_ =
       node_->declare_parameter<double>("control_mode_period", 1.0);
+
+  // "percent" (default) publishes the chassis' own 0~100 value on
+  // /battery_state.percentage, as this node always has; "ratio" publishes the
+  // 0~1 that sensor_msgs/BatteryState documents. /bms_state.battery_soc always
+  // stays 0~100, which its own message documents.
+  std::string battery_soc_unit =
+      node_->declare_parameter<std::string>("battery_soc_unit", "percent");
+  battery_soc_as_ratio_ = (battery_soc_unit == "ratio");
+  if (!battery_soc_as_ratio_ && battery_soc_unit != "percent") {
+    RCLCPP_WARN(node_->get_logger(),
+                "Unknown battery_soc_unit '%s', falling back to 'percent'",
+                battery_soc_unit.c_str());
+  }
   last_control_mode_send_ = node_->now();
 
   RCLCPP_INFO(node_->get_logger(),
@@ -149,13 +164,8 @@ void RangerROSMessenger::LoadParameters() {
     robot_params_.wheelbase = RangerMiniV1Params::wheelbase;
     robot_params_.max_linear_speed = RangerMiniV1Params::max_linear_speed;
     robot_params_.max_angular_speed = RangerMiniV1Params::max_angular_speed;
-    robot_params_.max_speed_cmd = RangerMiniV1Params::max_speed_cmd;
-    robot_params_.max_steer_angle_central =
-        RangerMiniV1Params::max_steer_angle_central;
     robot_params_.max_steer_angle_parallel =
         RangerMiniV1Params::max_steer_angle_parallel;
-    robot_params_.max_round_angle = RangerMiniV1Params::max_round_angle;
-    robot_params_.min_turn_radius = RangerMiniV1Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV1Params::max_steer_angle_ackermann;
   } else {
@@ -166,13 +176,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV2Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV2Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV2Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV2Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV2Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV2Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV2Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV2Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV2Params::max_steer_angle_ackermann;
     }
@@ -183,13 +188,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV3Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV3Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV3Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV3Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV3Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV3Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV3Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV3Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV3Params::max_steer_angle_ackermann;
     }
@@ -200,13 +200,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerParams::wheelbase;
       robot_params_.max_linear_speed = RangerParams::max_linear_speed;
       robot_params_.max_angular_speed = RangerParams::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerParams::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerParams::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerParams::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerParams::max_round_angle;
-      robot_params_.min_turn_radius = RangerParams::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerParams::max_steer_angle_ackermann;
     }
@@ -227,6 +222,8 @@ void RangerROSMessenger::SetupSubscription() {
   odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>(odom_topic_name_, 10);
   battery_state_pub_ =
       node_->create_publisher<sensor_msgs::msg::BatteryState>("/battery_state", 10);
+  bms_state_pub_ =
+      node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
 
   // subscriber
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
@@ -305,31 +302,72 @@ void RangerROSMessenger::PublishStateToROS() {
 
   auto state = robot_->GetRobotState();
   auto actuator_state = robot_->GetActuatorState();
+  auto common_sensor_state = robot_->GetCommonSensorState();
+
+  // ugv_sdk stamps a feedback group when a CAN frame updates it and leaves the
+  // message bodies untouched until then, so an unstamped group means nothing
+  // has been received yet. Publishing it anyway hands consumers a zero-filled
+  // message that reads as a healthy idle robot - vehicle_state 0 is "normal",
+  // motion_mode 0 is a valid mode and the battery reads 0 V - which is
+  // indistinguishable from a chassis that is powered off or off the bus.
+  const bool core_received = state.time_stamp.time_since_epoch().count() != 0;
+  const bool actuator_received =
+      actuator_state.time_stamp.time_since_epoch().count() != 0;
+  const bool sensor_received =
+      common_sensor_state.time_stamp.time_since_epoch().count() != 0;
+
+  if (state.time_stamp != last_core_stamp_) {
+    last_core_stamp_ = state.time_stamp;
+    ++core_feedback_count_;
+  }
+  if (actuator_state.time_stamp != last_actuator_stamp_) {
+    last_actuator_stamp_ = actuator_state.time_stamp;
+    ++actuator_feedback_count_;
+  }
+  if (common_sensor_state.time_stamp != last_sensor_stamp_) {
+    last_sensor_stamp_ = common_sensor_state.time_stamp;
+    ++sensor_feedback_count_;
+  }
+
+  if (!core_received && !actuator_received && !sensor_received) {
+    // Keep the odometry clock current so the first real frame does not
+    // integrate over the whole waiting period.
+    last_time_ = current_time_;
+    RCLCPP_WARN_THROTTLE(node_->get_logger(), *node_->get_clock(), 5000,
+                         "No CAN feedback received yet on %s, not publishing "
+                         "robot state",
+                         port_name_.c_str());
+    return;
+  }
 
   // update odometry
-  {
+  if (core_received) {
     double dt = (current_time_ - last_time_).seconds();
     UpdateOdometry(state.motion_state.linear_velocity,
                    state.motion_state.angular_velocity,
                    state.motion_state.steering_angle, dt);
     last_time_ = current_time_;
+  } else {
+    last_time_ = current_time_;
   }
 
   // publish system state
-  {
+  if (core_received) {
     ranger_msgs::msg::SystemState system_msg;
     system_msg.header.stamp = current_time_;
     system_msg.vehicle_state = state.system_state.vehicle_state;
     system_msg.control_mode = state.system_state.control_mode;
     system_msg.error_code = state.system_state.error_code;
+    system_msg.error_code_full = state.system_state.error_code_full;
     system_msg.battery_voltage = state.system_state.battery_voltage;
     system_msg.motion_mode = state.motion_mode_state.motion_mode;
+    system_msg.feedback_count = core_feedback_count_;
 
     system_state_pub_->publish(system_msg);
   }
 
   // publish motion mode
-  {
+  if (core_received) {
     motion_mode_ = state.motion_mode_state.motion_mode;
 
     // Track the chassis hardware parking mode reported over CAN (0x291). The
@@ -347,7 +385,7 @@ void RangerROSMessenger::PublishStateToROS() {
   }
 
   // publish actuator state
-  {
+  if (actuator_received) {
     // RCLCPP_DEBUG(node_->get_logger(),"feedback", "Angle_5:%f Angle_6:%f Angle_7:%f Angle_8:%f",
     //                 actuator_state.motor_angles.angle_5,
     //                 actuator_state.motor_angles.angle_6,
@@ -361,6 +399,7 @@ void RangerROSMessenger::PublishStateToROS() {
 
     ranger_msgs::msg::ActuatorStateArray actuator_msg;
     actuator_msg.header.stamp = current_time_;
+    actuator_msg.feedback_count = actuator_feedback_count_;
 
     // Ranger has 4 wheels, each with a drive motor and a steering motor (8 in
     // total). speed_1~4 map to drive motors (actuator id 0~3) and angle_5~8 map
@@ -406,15 +445,16 @@ void RangerROSMessenger::PublishStateToROS() {
   }
 
   // publish BMS state
-  {
-    auto common_sensor_state = robot_->GetCommonSensorState();
-
+  if (sensor_received) {
     sensor_msgs::msg::BatteryState batt_msg;
     batt_msg.header.stamp = current_time_;
     batt_msg.voltage = common_sensor_state.bms_basic_state.voltage;
     batt_msg.temperature = common_sensor_state.bms_basic_state.temperature;
     batt_msg.current = common_sensor_state.bms_basic_state.current;
-    batt_msg.percentage = common_sensor_state.bms_basic_state.battery_soc;
+    batt_msg.percentage = battery_soc_as_ratio_
+                              ? common_sensor_state.bms_basic_state.battery_soc /
+                                    100.0f
+                              : common_sensor_state.bms_basic_state.battery_soc;
     batt_msg.charge = std::numeric_limits<float>::quiet_NaN();
     batt_msg.capacity = std::numeric_limits<float>::quiet_NaN();
     batt_msg.design_capacity = std::numeric_limits<float>::quiet_NaN();
@@ -427,6 +467,20 @@ void RangerROSMessenger::PublishStateToROS() {
     batt_msg.present = std::numeric_limits<uint8_t>::quiet_NaN();
 
     battery_state_pub_->publish(batt_msg);
+
+    // The chassis reports a state of health that sensor_msgs/BatteryState has
+    // no field for, and it has to be logged, so mirror the frame on a message
+    // of our own instead of bending BatteryState's documented units.
+    ranger_msgs::msg::BmsState bms_msg;
+    bms_msg.header.stamp = current_time_;
+    bms_msg.battery_soc = common_sensor_state.bms_basic_state.battery_soc;
+    bms_msg.battery_soh = common_sensor_state.bms_basic_state.battery_soh;
+    bms_msg.voltage = common_sensor_state.bms_basic_state.voltage;
+    bms_msg.current = common_sensor_state.bms_basic_state.current;
+    bms_msg.temperature = common_sensor_state.bms_basic_state.temperature;
+    bms_msg.feedback_count = sensor_feedback_count_;
+
+    bms_state_pub_->publish(bms_msg);
   }
 }
 
@@ -531,6 +585,28 @@ void RangerROSMessenger::UpdateOdometry(double linear, double angular,
     tf_broadcaster_->sendTransform(tf_msg);
   }
 }
+
+namespace {
+// Manual, frame 0x111: the linear speed byte is valid over +-2000 mm/s, and
+// only over +-1000 mm/s once the steering angle passes 20 degrees. The limit
+// applies to the front/rear ackerman and the oblique (parallel) modes.
+constexpr double kSteerLimitThreshold = 0.349066;  // 20 degrees, in rad
+constexpr double kSpeedLimitAtFullSteer = 1.0;     // in m/s
+
+// Keep the commanded speed inside what the chassis accepts. Without this an
+// out-of-range command is silently cast to int16 by the SDK (value * 1000), so
+// e.g. a unit mix-up sending 40 m/s wraps around and drives the robot backwards
+// at full speed instead of saturating.
+double ClampLinearSpeed(double speed, double steer_angle, double max_speed) {
+  double limit = max_speed;
+  if (std::abs(steer_angle) > kSteerLimitThreshold) {
+    limit = std::min(limit, kSpeedLimitAtFullSteer);
+  }
+  if (speed > limit) return limit;
+  if (speed < -limit) return -limit;
+  return speed;
+}
+}  // namespace
 
 void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg) {
   double steer_cmd = 0.0;
@@ -676,7 +752,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       if (steer_cmd < -robot_params_.max_steer_angle_ackermann) {
         steer_cmd = -robot_params_.max_steer_angle_ackermann;
       }
-      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(msg->linear.x, steer_cmd,
+                           robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
@@ -698,7 +777,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       const double y_norm = std::max(-1.0, std::min(1.0, msg->linear.y));
       steer_cmd = y_norm * robot_params_.max_steer_angle_parallel;
 
-      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(msg->linear.x, steer_cmd,
+                           robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_SPINNING: {
