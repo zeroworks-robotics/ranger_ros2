@@ -235,8 +235,37 @@ for line in sys.stdin:
   stop
   info "목표 도달 시각을 보고 본 테스트의 샘플링 시점을 정합니다."
   ;;
+1e)
+  hdr "1e. 진단 — 속도별 조향 도달 (x 를 쓸면서 y 고정)"
+  info "조향이 속도에 따라 못 가는지 봅니다. x 마다 12초씩, 총 1분 남짓 움직입니다."
+  info "각 구간의 조향 궤적과 모드/에러를 함께 기록합니다."
+  ask "공간 확보됐습니까?"
+  for x in 0.0 0.1 0.2 0.3 0.5; do
+    stop
+    echo "  --- x=$x y=0.3 (기대 조향 0.471)"
+    ( timeout 13 ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: $x, y: 0.3}}" >/dev/null 2>&1 ) &
+    pid=$!
+    timeout 12 ros2 topic echo /actuator_state 2>/dev/null \
+      | grep --line-buffered -oP 'motor_angles: \K[-0-9.e+]+' \
+      | python3 -u -c "
+import sys, time
+t0=time.time(); n=0; prev=None
+for line in sys.stdin:
+    n+=1
+    if n%8!=5: continue
+    v=float(line); t=time.time()-t0
+    if prev is None or abs(v-prev)>0.02:
+        print('      t=%4.1fs  조향=%+.3f' % (t, v)); prev=v
+" | awk 'NR<=14'
+    wait $pid 2>/dev/null
+    printf "      끝: mode=%s error_full=%s vehicle_state=%s\n" \
+      "$(field /motion_state motion_mode)" "$(field /system_state error_code_full)" "$(field /system_state vehicle_state)"
+  done
+  stop
+  info "조향이 멈춘 x 구간과, 그때 error_full/mode 가 무엇이었는지 보세요."
+  ;;
 *)
-  echo "사용법: $0 <0-7|1d> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적진단 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
+  echo "사용법: $0 <0-7|1d|1e> [CAN인터페이스]"; echo "  0 설치 / 1 PARALLEL / 1d 조향궤적 / 1e 속도별조향 / 2 클램프 / 3 게이트 / 4 카운터 / 5 고장 / 6 BMS / 7 회귀"; exit 1 ;;
 esac
 echo; echo "  합계: PASS $PASS / FAIL $FAIL"
 [ "$FAIL" -eq 0 ] || exit 1
