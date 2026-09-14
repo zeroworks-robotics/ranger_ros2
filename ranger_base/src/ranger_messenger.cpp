@@ -9,6 +9,8 @@
 
 #include "ranger_base/ranger_messenger.hpp"
 
+#include <algorithm>
+
 #include "ranger_base/kinematics_model.hpp"
 
 using namespace rclcpp;
@@ -162,13 +164,8 @@ void RangerROSMessenger::LoadParameters() {
     robot_params_.wheelbase = RangerMiniV1Params::wheelbase;
     robot_params_.max_linear_speed = RangerMiniV1Params::max_linear_speed;
     robot_params_.max_angular_speed = RangerMiniV1Params::max_angular_speed;
-    robot_params_.max_speed_cmd = RangerMiniV1Params::max_speed_cmd;
-    robot_params_.max_steer_angle_central =
-        RangerMiniV1Params::max_steer_angle_central;
     robot_params_.max_steer_angle_parallel =
         RangerMiniV1Params::max_steer_angle_parallel;
-    robot_params_.max_round_angle = RangerMiniV1Params::max_round_angle;
-    robot_params_.min_turn_radius = RangerMiniV1Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV1Params::max_steer_angle_ackermann;
   } else {
@@ -179,13 +176,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV2Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV2Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV2Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV2Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV2Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV2Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV2Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV2Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV2Params::max_steer_angle_ackermann;
     }
@@ -196,13 +188,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerMiniV3Params::wheelbase;
       robot_params_.max_linear_speed = RangerMiniV3Params::max_linear_speed;
       robot_params_.max_angular_speed = RangerMiniV3Params::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerMiniV3Params::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerMiniV3Params::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerMiniV3Params::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerMiniV3Params::max_round_angle;
-      robot_params_.min_turn_radius = RangerMiniV3Params::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerMiniV3Params::max_steer_angle_ackermann;
     }
@@ -213,13 +200,8 @@ void RangerROSMessenger::LoadParameters() {
       robot_params_.wheelbase = RangerParams::wheelbase;
       robot_params_.max_linear_speed = RangerParams::max_linear_speed;
       robot_params_.max_angular_speed = RangerParams::max_angular_speed;
-      robot_params_.max_speed_cmd = RangerParams::max_speed_cmd;
-      robot_params_.max_steer_angle_central =
-          RangerParams::max_steer_angle_central;
       robot_params_.max_steer_angle_parallel =
           RangerParams::max_steer_angle_parallel;
-      robot_params_.max_round_angle = RangerParams::max_round_angle;
-      robot_params_.min_turn_radius = RangerParams::min_turn_radius;
       robot_params_.max_steer_angle_ackermann =
           RangerParams::max_steer_angle_ackermann;
     }
@@ -604,6 +586,28 @@ void RangerROSMessenger::UpdateOdometry(double linear, double angular,
   }
 }
 
+namespace {
+// Manual, frame 0x111: the linear speed byte is valid over +-2000 mm/s, and
+// only over +-1000 mm/s once the steering angle passes 20 degrees. The limit
+// applies to the front/rear ackerman and the oblique (parallel) modes.
+constexpr double kSteerLimitThreshold = 0.349066;  // 20 degrees, in rad
+constexpr double kSpeedLimitAtFullSteer = 1.0;     // in m/s
+
+// Keep the commanded speed inside what the chassis accepts. Without this an
+// out-of-range command is silently cast to int16 by the SDK (value * 1000), so
+// e.g. a unit mix-up sending 40 m/s wraps around and drives the robot backwards
+// at full speed instead of saturating.
+double ClampLinearSpeed(double speed, double steer_angle, double max_speed) {
+  double limit = max_speed;
+  if (std::abs(steer_angle) > kSteerLimitThreshold) {
+    limit = std::min(limit, kSpeedLimitAtFullSteer);
+  }
+  if (speed > limit) return limit;
+  if (speed < -limit) return -limit;
+  return speed;
+}
+}  // namespace
+
 void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr msg) {
   double steer_cmd = 0.0;
   double radius = 0.0;
@@ -748,7 +752,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       if (steer_cmd < -robot_params_.max_steer_angle_ackermann) {
         steer_cmd = -robot_params_.max_steer_angle_ackermann;
       }
-      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(msg->linear.x, steer_cmd,
+                           robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_PARALLEL: {
@@ -770,7 +777,10 @@ void RangerROSMessenger::TwistCmdCallback(geometry_msgs::msg::Twist::SharedPtr m
       const double y_norm = std::max(-1.0, std::min(1.0, msg->linear.y));
       steer_cmd = y_norm * robot_params_.max_steer_angle_parallel;
 
-      robot_->SetMotionCommand(msg->linear.x, steer_cmd);
+      robot_->SetMotionCommand(
+          ClampLinearSpeed(msg->linear.x, steer_cmd,
+                           robot_params_.max_linear_speed),
+          steer_cmd);
       break;
     }
     case MotionState::MOTION_MODE_SPINNING: {

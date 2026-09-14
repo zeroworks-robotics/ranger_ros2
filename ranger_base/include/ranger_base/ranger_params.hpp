@@ -21,11 +21,10 @@ struct RangerParams {
   static constexpr double max_angular_speed = 0.7853;        // in rad/s
   static constexpr double max_speed_cmd = 10.0;              // in rad/s
   static constexpr double max_steer_angle_central = 0.6981;  //~= 30.58 degree
-  static constexpr double max_steer_angle_parallel = 1.570;  // 40 degree
-  static constexpr double max_round_angle = 1.0057;       // 40 degreeF
+  static constexpr double max_steer_angle_parallel = 1.570;  //~= 90 degree
+  static constexpr double max_round_angle = 1.0057;  //~= 57.6 degree
   static constexpr double min_turn_radius = 0.810330349;
-  static constexpr double max_steer_angle_ackermann = 0.6981; 
-
+  static constexpr double max_steer_angle_ackermann = 0.6981;  //~= 40 degree
 };
 
 struct RangerMiniV1Params {
@@ -39,11 +38,10 @@ struct RangerMiniV1Params {
   static constexpr double max_speed_cmd = 5;        // in rad/s
 
   static constexpr double max_steer_angle_central = 0.4280;  //~= 24.52 degree
-  static constexpr double max_steer_angle_parallel = 0.6981;    // 40 degree
-  static constexpr double max_round_angle = 0.935671;
+  static constexpr double max_steer_angle_parallel = 0.6981;  //~= 40 degree
+  static constexpr double max_round_angle = 0.935671;  //~= 53.6 degree
   static constexpr double min_turn_radius = 0.536;
-  static constexpr double max_steer_angle_ackermann = 0.6981;
-
+  static constexpr double max_steer_angle_ackermann = 0.6981;  //~= 40 degree
 };
 
 struct RangerMiniV2Params {
@@ -57,11 +55,10 @@ struct RangerMiniV2Params {
   static constexpr double max_speed_cmd = 10.0;        // in rad/s
 
   static constexpr double max_steer_angle_central = 0.4782;  //~= 27.40 degree
-  static constexpr double max_steer_angle_parallel = 1.570;     // 180 degree
-  static constexpr double max_round_angle = 0.935671;
+  static constexpr double max_steer_angle_parallel = 1.570;  //~= 90 degree
+  static constexpr double max_round_angle = 0.935671;  //~= 53.6 degree
   static constexpr double min_turn_radius = 0.4764;
-  static constexpr double max_steer_angle_ackermann = 0.6981;
-
+  static constexpr double max_steer_angle_ackermann = 0.6981;  //~= 40 degree
 };
 
 struct RangerMiniV3Params {
@@ -70,16 +67,19 @@ struct RangerMiniV3Params {
   static constexpr double wheelbase =
       0.494;  // in meter (front & rear wheel distance) //ranger-mini 0.494
 
-  static constexpr double max_linear_speed = 1.5;      // in m/s
+  // Manual: maximum speed 7.2 km/h, and frame 0x111 accepts +-2000 mm/s.
+  static constexpr double max_linear_speed = 2.0;      // in m/s
   static constexpr double max_angular_speed = 4.8;  // in rad/s
   static constexpr double max_speed_cmd = 10.0;        // in rad/s
 
   static constexpr double max_steer_angle_central = 0.4782;  //~= 27.40 degree
-  static constexpr double max_steer_angle_parallel = 1.570;     // 180 degree
-  static constexpr double max_round_angle = 0.935671;
+  static constexpr double max_steer_angle_parallel = 1.570;  //~= 90 degree
+  static constexpr double max_round_angle = 0.935671;  //~= 53.6 degree
+  // The manual gives 810 mm for the ackermann minimum turning radius and 0 mm
+  // for spin mode. This value does not match it and nothing reads it; it is
+  // kept only so the discrepancy stays visible if someone starts using it.
   static constexpr double min_turn_radius = 0.47644;
-  static constexpr double max_steer_angle_ackermann = 0.6981;
-
+  static constexpr double max_steer_angle_ackermann = 0.6981;  //~= 40 degree
 };
 
 }  // namespace westonrobot
