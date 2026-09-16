@@ -37,7 +37,6 @@
 
 //user msg include
 #include <ranger_msgs/msg/system_state.hpp>
-#include <ranger_msgs/msg/bms_state.hpp>
 #include <ranger_msgs/msg/motion_state.hpp>
 #include <ranger_msgs/msg/actuator_state_array.hpp>
 
@@ -146,7 +145,6 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  rclcpp::Publisher<ranger_msgs::msg::BmsState>::SharedPtr bms_state_pub_;
   // /battery_state carries the whole battery state as one JSON document on a
   // std_msgs/String rather than a sensor_msgs/BatteryState: the chassis reports
   // a state of health that BatteryState has no field for, and a consumer that

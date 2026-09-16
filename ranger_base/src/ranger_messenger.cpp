@@ -210,8 +210,6 @@ void RangerROSMessenger::SetupSubscription() {
   actuator_state_pub_ =
       node_->create_publisher<ranger_msgs::msg::ActuatorStateArray>("/actuator_state", 10);
   odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>(odom_topic_name_, 10);
-  bms_state_pub_ =
-      node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
   battery_state_pub_ = node_->create_publisher<std_msgs::msg::String>(
       "/battery_state", 10);
 
@@ -444,20 +442,6 @@ void RangerROSMessenger::PublishStateToROS() {
 
   // publish BMS state
   if (sensor_received) {
-    // The chassis reports a state of health that sensor_msgs/BatteryState has
-    // no field for, and it has to be logged, so mirror the frame on a message
-    // of our own instead of bending BatteryState's documented units.
-    ranger_msgs::msg::BmsState bms_msg;
-    bms_msg.header.stamp = current_time_;
-    bms_msg.battery_soc = common_sensor_state.bms_basic_state.battery_soc;
-    bms_msg.battery_soh = common_sensor_state.bms_basic_state.battery_soh;
-    bms_msg.voltage = common_sensor_state.bms_basic_state.voltage;
-    bms_msg.current = common_sensor_state.bms_basic_state.current;
-    bms_msg.temperature = common_sensor_state.bms_basic_state.temperature;
-    bms_msg.feedback_count = sensor_feedback_count_;
-
-    bms_state_pub_->publish(bms_msg);
-
     // The same battery state as one JSON document, for consumers that would
     // rather not depend on ranger_msgs - a different chassis can keep the keys
     // and leave them unchanged. Rate-limited to real frames: PublishStateToROS

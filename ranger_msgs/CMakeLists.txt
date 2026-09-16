@@ -19,7 +19,6 @@ find_package(std_msgs REQUIRED)
 set(msg_file
 "msg/ActuatorState.msg"
 "msg/ActuatorStateArray.msg"
-"msg/BmsState.msg"
 "msg/DriverState.msg"
 "msg/MotionState.msg"
 "msg/MotorState.msg"
