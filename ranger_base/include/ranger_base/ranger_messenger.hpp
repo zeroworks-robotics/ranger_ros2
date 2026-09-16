@@ -26,7 +26,6 @@
 #include <geometry_msgs/msg/twist.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
-#include <sensor_msgs/msg/battery_state.hpp>
 #include <std_msgs/msg/u_int8.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <std_srvs/srv/set_bool.hpp>
@@ -142,23 +141,19 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   SdkTimePoint last_sensor_stamp_{};
   uint32_t sensor_feedback_count_ = 0;
 
-  // sensor_msgs/BatteryState documents percentage as a 0~1 ratio, but the
-  // chassis reports 0~100 and this node has always published that raw value,
-  // so consumers are built around it. Keep the existing behaviour by default
-  // and let the fleet switch to the documented unit deliberately.
-  bool battery_soc_as_ratio_ = false;
 
   rclcpp::Publisher<ranger_msgs::msg::SystemState>::SharedPtr system_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::MotionState>::SharedPtr motion_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::ActuatorStateArray>::SharedPtr actuator_state_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr battery_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::BmsState>::SharedPtr bms_state_pub_;
-  // The whole battery state as one JSON document on a std_msgs/String, for
-  // consumers that would rather not depend on ranger_msgs. Published only when
-  // a BMS frame actually arrives, so its absence is the liveness signal and no
-  // counter is needed.
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr battery_json_pub_;
+  // /battery_state carries the whole battery state as one JSON document on a
+  // std_msgs/String rather than a sensor_msgs/BatteryState: the chassis reports
+  // a state of health that BatteryState has no field for, and a consumer that
+  // does not want to depend on ranger_msgs can read every value from one topic.
+  // Published only when a BMS frame actually arrives, so its absence is the
+  // liveness signal and no counter is needed.
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr battery_state_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
   rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr control_mode_sub_;
