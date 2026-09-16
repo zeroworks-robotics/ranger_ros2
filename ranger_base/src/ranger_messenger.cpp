@@ -224,6 +224,8 @@ void RangerROSMessenger::SetupSubscription() {
       node_->create_publisher<sensor_msgs::msg::BatteryState>("/battery_state", 10);
   bms_state_pub_ =
       node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
+  battery_extra_pub_ = node_->create_publisher<std_msgs::msg::String>(
+      "/ranger_base/battery_extra", 10);
 
   // subscriber
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
@@ -330,7 +332,9 @@ void RangerROSMessenger::PublishStateToROS() {
     last_actuator_stamp_ = actuator_state.time_stamp;
     bump(actuator_feedback_count_);
   }
-  if (common_sensor_state.time_stamp != last_sensor_stamp_) {
+  const bool sensor_updated =
+      common_sensor_state.time_stamp != last_sensor_stamp_;
+  if (sensor_updated) {
     last_sensor_stamp_ = common_sensor_state.time_stamp;
     bump(sensor_feedback_count_);
   }
@@ -487,6 +491,19 @@ void RangerROSMessenger::PublishStateToROS() {
     bms_msg.feedback_count = sensor_feedback_count_;
 
     bms_state_pub_->publish(bms_msg);
+
+    // Same state of health once more, as JSON. Rate-limited to real frames:
+    // PublishStateToROS runs at a fixed rate and republishes the last known
+    // state, so publishing here on every cycle would make a dead bus look
+    // alive. Skipping the republish lets a consumer time out on the gap
+    // instead, which is what it would have used the counter for.
+    if (sensor_updated) {
+      std_msgs::msg::String extra_msg;
+      extra_msg.data =
+          "{\"soh\":" +
+          std::to_string(common_sensor_state.bms_basic_state.battery_soh) + "}";
+      battery_extra_pub_->publish(extra_msg);
+    }
   }
 }
 

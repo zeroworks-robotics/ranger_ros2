@@ -28,6 +28,7 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 #include <sensor_msgs/msg/battery_state.hpp>
 #include <std_msgs/msg/u_int8.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 
 //third libaray inclue
@@ -153,6 +154,11 @@ class RangerROSMessenger : public std::enable_shared_from_this<RangerROSMessenge
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   rclcpp::Publisher<sensor_msgs::msg::BatteryState>::SharedPtr battery_state_pub_;
   rclcpp::Publisher<ranger_msgs::msg::BmsState>::SharedPtr bms_state_pub_;
+  // Battery fields that sensor_msgs/BatteryState has nowhere to put, as JSON on
+  // a std_msgs/String, for consumers that would rather not depend on
+  // ranger_msgs. Published only when a BMS frame actually arrives, so its
+  // absence is the liveness signal and no counter is needed.
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr battery_extra_pub_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr motion_cmd_sub_;
   rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr control_mode_sub_;
