@@ -9,6 +9,8 @@
 
 #include "ranger_base/ranger_messenger.hpp"
 
+#include <cstdio>
+
 #include <algorithm>
 
 #include "ranger_base/kinematics_model.hpp"
@@ -224,8 +226,8 @@ void RangerROSMessenger::SetupSubscription() {
       node_->create_publisher<sensor_msgs::msg::BatteryState>("/battery_state", 10);
   bms_state_pub_ =
       node_->create_publisher<ranger_msgs::msg::BmsState>("/bms_state", 10);
-  battery_extra_pub_ = node_->create_publisher<std_msgs::msg::String>(
-      "/ranger_base/battery_extra", 10);
+  battery_json_pub_ = node_->create_publisher<std_msgs::msg::String>(
+      "/ranger_base/battery", 10);
 
   // subscriber
   motion_cmd_sub_ = node_->create_subscription<geometry_msgs::msg::Twist>(
@@ -492,17 +494,26 @@ void RangerROSMessenger::PublishStateToROS() {
 
     bms_state_pub_->publish(bms_msg);
 
-    // Same state of health once more, as JSON. Rate-limited to real frames:
-    // PublishStateToROS runs at a fixed rate and republishes the last known
-    // state, so publishing here on every cycle would make a dead bus look
-    // alive. Skipping the republish lets a consumer time out on the gap
-    // instead, which is what it would have used the counter for.
+    // The same battery state as one JSON document, for consumers that would
+    // rather not depend on ranger_msgs - a different chassis can keep the keys
+    // and leave them unchanged. Rate-limited to real frames: PublishStateToROS
+    // runs at a fixed rate and republishes the last known state, so publishing
+    // here on every cycle would make a dead bus look alive. Skipping the
+    // republish lets a consumer time out on the gap instead, which is what it
+    // would otherwise need a feedback counter for.
     if (sensor_updated) {
-      std_msgs::msg::String extra_msg;
-      extra_msg.data =
-          "{\"soh\":" +
-          std::to_string(common_sensor_state.bms_basic_state.battery_soh) + "}";
-      battery_extra_pub_->publish(extra_msg);
+      const auto& bms = common_sensor_state.bms_basic_state;
+      char buf[160];
+      // soc/soh are whole percent, the rest are the chassis' own units.
+      std::snprintf(buf, sizeof(buf),
+                    "{\"soc\":%u,\"soh\":%u,\"voltage\":%.2f,"
+                    "\"current\":%.1f,\"temperature\":%.1f}",
+                    static_cast<unsigned>(bms.battery_soc),
+                    static_cast<unsigned>(bms.battery_soh), bms.voltage,
+                    bms.current, bms.temperature);
+      std_msgs::msg::String json_msg;
+      json_msg.data = buf;
+      battery_json_pub_->publish(json_msg);
     }
   }
 }
