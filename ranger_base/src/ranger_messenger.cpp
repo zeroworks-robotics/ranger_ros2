@@ -133,16 +133,16 @@ void RangerROSMessenger::LoadParameters() {
   control_mode_period_ =
       node_->declare_parameter<double>("control_mode_period", 1.0);
 
-  // "percent" (default) publishes the chassis' own 0~100 value on
-  // /battery_state.percentage, as this node always has; "ratio" publishes the
-  // 0~1 that sensor_msgs/BatteryState documents. /bms_state.battery_soc always
-  // stays 0~100, which its own message documents.
+  // "ratio" (default) publishes the 0~1 that sensor_msgs/BatteryState
+  // documents; "percent" keeps the chassis' own 0~100 on
+  // /battery_state.percentage, which is what this node published before.
+  // /bms_state.battery_soc always stays 0~100, which its own message documents.
   std::string battery_soc_unit =
-      node_->declare_parameter<std::string>("battery_soc_unit", "percent");
-  battery_soc_as_ratio_ = (battery_soc_unit == "ratio");
-  if (!battery_soc_as_ratio_ && battery_soc_unit != "percent") {
+      node_->declare_parameter<std::string>("battery_soc_unit", "ratio");
+  battery_soc_as_ratio_ = (battery_soc_unit != "percent");
+  if (battery_soc_unit != "ratio" && battery_soc_unit != "percent") {
     RCLCPP_WARN(node_->get_logger(),
-                "Unknown battery_soc_unit '%s', falling back to 'percent'",
+                "Unknown battery_soc_unit '%s', falling back to 'ratio'",
                 battery_soc_unit.c_str());
   }
   last_control_mode_send_ = node_->now();

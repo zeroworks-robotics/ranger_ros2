@@ -32,8 +32,8 @@ def generate_launch_description():
                                            description='robot motion model')
     steer_mode_arg = DeclareLaunchArgument('steer_mode', default_value='twist',
                                            description="'twist' (yaw-rate) or 'direct' (RC-like steering angle)")
-    battery_soc_unit_arg = DeclareLaunchArgument('battery_soc_unit', default_value='percent',
-                                           description="Unit of /battery_state.percentage: 'percent' (0~100, as the chassis reports) or 'ratio' (0~1, as sensor_msgs documents)")
+    battery_soc_unit_arg = DeclareLaunchArgument('battery_soc_unit', default_value='ratio',
+                                           description="Unit of /battery_state.percentage: 'ratio' (0~1, as sensor_msgs documents) or 'percent' (0~100, as the chassis reports)")
     ranger_base_node = launch_ros.actions.Node(
         package='ranger_base',
         executable='ranger_base_node',
